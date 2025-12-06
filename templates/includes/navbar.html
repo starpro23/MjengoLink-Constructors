@@ -1,0 +1,56 @@
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-3 text-mjengo-primary" href="{% url 'home' %}">
+            <i class="bi bi-hammer me-2"></i>MjengoLink
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'how-it-works' %}">How It Works</a></li>
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'projects:browse' %}">Find Artisans</a></li>
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'about' %}">About</a></li>
+
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle fw-medium" href="#" role="button" data-bs-toggle="dropdown">
+                        Dashboard
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% if user.is_client %}
+                        <li><a class="dropdown-item" href="{% url 'users:client_dashboard' %}">My Projects</a></li>
+                        <li><a class="dropdown-item" href="{% url 'projects:create' %}">Post New Project</a></li>
+                        {% elif user.is_artisan %}
+                        <li><a class="dropdown-item" href="{% url 'users:artisan_dashboard' %}">My Jobs</a></li>
+                        <li><a class="dropdown-item" href="{% url 'projects:browse_jobs' %}">Browse Jobs</a></li>
+                        {% endif %}
+                        <li><a class="dropdown-item" href="{% url 'payments:history' %}">Payment History</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'users:profile' %}">My Profile</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+            </ul>
+            <div class="d-flex ms-lg-3">
+                {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.username }}
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'users:profile' %}">Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'users:logout' %}">Logout</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{% url 'users:login' %}" class="btn btn-outline-primary me-2">Log In</a>
+                    <a href="{% url 'users:register' %}" class="btn btn-primary">Sign Up Free</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

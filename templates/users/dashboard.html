@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | MjengoLink{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="fw-bold mb-2">Dashboard</h1>
+                <p class="text-muted mb-0">Welcome back, {{ user.first_name }}! Here's an overview of your activity.</p>
+            </div>
+            {% if user.user_type == 'homeowner' %}
+            <div class="col-auto">
+                <a href="{% url 'projects:create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-1"></i> Post New Project
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card text-center">
+                    <div class="dashboard-icon mx-auto mb-3">
+                        <i class="bi bi-briefcase"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">{{ active_projects }}</h3>
+                    <p class="text-muted mb-0">Active Projects</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card text-center">
+                    <div class="dashboard-icon mx-auto mb-3">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">{{ completed_projects }}</h3>
+                    <p class="text-muted mb-0">Completed</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card text-center">
+                    <div class="dashboard-icon mx-auto mb-3">
+                        <i class="bi bi-star"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">{{ average_rating|default:"0.0" }}</h3>
+                    <p class="text-muted mb-0">Average Rating</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="dashboard-card text-center">
+                    <div class="dashboard-icon mx-auto mb-3">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">KES {{ total_spent|default:"0" }}</h3>
+                    <p class="text-muted mb-0">Total Spent/Earned</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">Recent Activity</h5>
+                        <a href="{% url 'users:my_projects' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if recent_activities %}
+                            <div class="list-group list-group-flush">
+                                {% for activity in recent_activities %}
+                                <div class="list-group-item border-0 px-4 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0">
+                                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <i class="bi bi-{{ activity.icon }} text-primary"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="d-flex justify-content-between">
+                                                <h6 class="fw-bold mb-0">{{ activity.title }}</h6>
+                                                <small class="text-muted">{{ activity.time }}</small>
+                                            </div>
+                                            <p class="text-muted mb-0 small">{{ activity.description }}</p>
+                                            {% if activity.project %}
+                                            <a href="{% url 'projects:detail' activity.project.id %}" class="small">View Project</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="bi bi-activity display-1 text-muted mb-3"></i>
+                                <p class="text-muted mb-0">No recent activity</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if user.user_type == 'homeowner' %}
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="fw-bold mb-0">Recommended Artisans</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            {% for artisan in recommended_artisans %}
+                            <div class="col-md-6">
+                                <div class="card border h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-start mb-3">
+                                            {% if artisan.profile_picture %}
+                                                <img src="{{ artisan.profile_picture.url }}" alt="{{ artisan.user.get_full_name }}" class="rounded-circle me-3" width="50" height="50">
+                                            {% else %}
+                                                <div class="rounded-circle bg-mjengo-primary d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                                                    <span class="text-white">{{ artisan.user.first_name|first|upper }}</span>
+                                                </div>
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="fw-bold mb-0">{{ artisan.user.get_full_name }}</h6>
+                                                <span class="badge bg-mjengo-secondary text-dark">{{ artisan.get_trade_display }}</span>
+                                                <div class="d-flex align-items-center mt-1">
+                                                    <i class="bi bi-star-fill text-warning me-1 small"></i>
+                                                    <span class="small">{{ artisan.average_rating|default:"0.0" }}</span>
+                                                    <span class="small text-muted ms-2">({{ artisan.total_projects }} projects)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p class="small text-muted mb-3">{{ artisan.bio|truncatechars:100 }}</p>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="badge bg-light text-dark">KES {{ artisan.hourly_rate|default:"N/A" }}/hr</span>
+                                            <a href="#" class="btn btn-sm btn-outline-primary">View Profile</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="col-12 text-center py-4">
+                                <p class="text-muted mb-0">No recommendations yet. Post a project to get matched with artisans!</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-4">
+                {% if user.user_type == 'artisan' %}
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="fw-bold mb-0">Available Projects</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if available_projects %}
+                            <div class="list-group list-group-flush">
+                                {% for project in available_projects %}
+                                <a href="{% url 'projects:detail' project.id %}" class="list-group-item list-group-item-action border-0 px-4 py-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="fw-bold mb-1">{{ project.title }}</h6>
+                                            <p class="small text-muted mb-1">{{ project.description|truncatechars:60 }}</p>
+                                            <span class="badge bg-light text-dark">{{ project.get_category_display }}</span>
+                                        </div>
+                                        <span class="badge bg-primary">KES {{ project.budget }}</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            <i class="bi bi-geo-alt me-1"></i>{{ project.location }}
+                                            <i class="bi bi-clock ms-3 me-1"></i>{{ project.created_at|timesince }} ago
+                                        </small>
+                                    </div>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="bi bi-briefcase display-1 text-muted mb-3"></i>
+                                <p class="text-muted mb-0">No available projects</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="fw-bold mb-0">Quick Stats</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6 class="fw-bold mb-2">Project Status</h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-primary me-2" style="width: 20px; height: 20px;"></span>
+                                <span>Pending: {{ project_stats.pending }}</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-info me-2" style="width: 20px; height: 20px;"></span>
+                                <span>In Progress: {{ project_stats.in_progress }}</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-success me-2" style="width: 20px; height: 20px;"></span>
+                                <span>Completed: {{ project_stats.completed }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <h6 class="fw-bold mb-2">Response Rate</h6>
+                            <div class="progress mb-2" style="height: 10px;">
+                                <div class="progress-bar bg-success" style="width: {{ response_rate }}%"></div>
+                            </div>
+                            <small class="text-muted">{{ response_rate }}% average response time</small>
+                        </div>
+
+                        <div>
+                            <h6 class="fw-bold mb-2">Member Since</h6>
+                            <p class="text-muted mb-0">{{ user.date_joined|date:"F d, Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

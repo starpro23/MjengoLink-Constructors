@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | Find Trusted Construction Artisans{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section id="home" class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 animate-fadeInUp">
+                <h1 class="display-4 fw-bold mb-3">Find Trusted Construction Artisans. Get Your Project Done Right.</h1>
+                <p class="lead mb-4 opacity-75">MjengoLink bridges the gap between skilled, verified fundis and homeowners. Experience a new level of trust, transparency, and quality for your building projects.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'projects:create' %}" class="btn btn-secondary btn-lg px-4 py-3 fw-semibold">Post a Project <i class="bi bi-arrow-right ms-2"></i></a>
+                    {% else %}
+                        <a href="{% url 'users:register' %}" class="btn btn-secondary btn-lg px-4 py-3 fw-semibold">Get Started Free <i class="bi bi-arrow-right ms-2"></i></a>
+                    {% endif %}
+                    <a href="{% url 'projects:browse' %}" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold">Browse Top Artisans</a>
+                </div>
+                <div class="mt-4 d-flex align-items-center">
+                    <div class="d-flex">
+                        <i class="bi bi-star-fill text-warning me-1"></i>
+                        <i class="bi bi-star-fill text-warning me-1"></i>
+                        <i class="bi bi-star-fill text-warning me-1"></i>
+                        <i class="bi bi-star-fill text-warning me-1"></i>
+                        <i class="bi bi-star-half text-warning me-2"></i>
+                    </div>
+                    <span class="opacity-75">Rated 4.8/5 by 2,500+ homeowners</span>
+                </div>
+            </div>
+            <div class="col-lg-6 mt-5 mt-lg-0 animate-fadeInUp delay-1">
+                <div class="hero-image-container">
+                    <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Construction professional at work" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-4 mb-md-0">
+                <div class="stat-item">
+                    <div class="stat-number">2,500+</div>
+                    <div class="stat-label">Verified Artisans</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4 mb-md-0">
+                <div class="stat-item">
+                    <div class="stat-number">15,000+</div>
+                    <div class="stat-label">Projects Completed</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Satisfaction Rate</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Support Available</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section id="how" class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="fw-bold mb-3">How MjengoLink Works</h2>
+                <p class="lead text-muted">A simple, secure process from start to finish.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="how-it-works-step animate-fadeInUp">
+                    <span class="step-number">1</span>
+                    <h4 class="fw-bold mb-3">Post Your Need</h4>
+                    <p class="text-muted mb-0">Describe your project—whether it's plumbing, electrical, masonry, or carpentry. Set your budget and timeline.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="how-it-works-step animate-fadeInUp delay-1">
+                    <span class="step-number">2</span>
+                    <h4 class="fw-bold mb-3">Get Matched</h4>
+                    <p class="text-muted mb-0">Our system connects you with verified, skilled artisans in your area. Review their profiles, ratings, and past work.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="how-it-works-step animate-fadeInUp delay-2">
+                    <span class="step-number">3</span>
+                    <h4 class="fw-bold mb-3">Manage & Pay Securely</h4>
+                    <p class="text-muted mb-0">Communicate, agree on milestones, and use our integrated M-Pesa logging for transparent, secure payments.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Key Features -->
+<section id="features" class="py-5">
+    <div class="container py-5">
+        <h2 class="fw-bold text-center mb-5">Why Choose MjengoLink?</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card p-4 text-center h-100 animate-fadeInUp">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Verified Artisans</h5>
+                    <p class="text-muted mb-0">Every fundi is ID-verified with skill checks and reference validation to ensure quality and trust.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card p-4 text-center h-100 animate-fadeInUp delay-1">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-currency-exchange"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Fair Price Beacon</h5>
+                    <p class="text-muted mb-0">Get transparent, data-driven market rates for your project to budget confidently and avoid overcharges.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card p-4 text-center h-100 animate-fadeInUp delay-2">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-chat-dots"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Secure Messaging</h5>
+                    <p class="text-muted mb-0">Communicate safely within the platform. All agreements and discussions are logged for accountability.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card p-4 text-center h-100 animate-fadeInUp delay-3">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Payment Protection</h5>
+                    <p class="text-muted mb-0">Our milestone-based M-Pesa verification creates a record for each payment, giving both parties peace of mind.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Find Artisans / Trades -->
+<section id="trades" class="py-5 bg-mjengo-primary">
+    <div class="container py-5">
+        <h2 class="fw-bold text-center mb-5 text-white">Find Skilled Professionals</h2>
+        <div class="row g-4 justify-content-center">
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="trade-item">
+                    <i class="bi bi-droplet"></i>
+                    <span class="fw-semibold">Plumbers</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="trade-item">
+                    <i class="bi bi-lightning-charge"></i>
+                    <span class="fw-semibold">Electricians</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="trade-item">
+                    <i class="bi bi-bricks"></i>
+                    <span class="fw-semibold">Masons</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="trade-item">
+                    <i class="bi bi-tools"></i>
+                    <span class="fw-semibold">Carpenters</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="trade-item">
+                    <i class="bi bi-brush"></i>
+                    <span class="fw-semibold">Painters</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="trade-item">
+                    <i class="bi bi-wrench"></i>
+                    <span class="fw-semibold">Welders</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="trade-item">
+                    <i class="bi bi-house-door"></i>
+                    <span class="fw-semibold">Roofers</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="trade-item">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                    <span class="fw-semibold">Tilers</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="trade-item">
+                    <i class="bi bi-tree"></i>
+                    <span class="fw-semibold">Landscapers</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="trade-item">
+                    <i class="bi bi-columns-gap"></i>
+                    <span class="fw-semibold">Interior Designers</span>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <a href="{% url 'projects:browse' %}" class="btn btn-light btn-lg px-4">Browse All Trades <i class="bi bi-arrow-right ms-2"></i></a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section id="testimonials" class="py-5 bg-light">
+    <div class="container py-5">
+        <h2 class="fw-bold text-center mb-5">What Our Clients Say</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="testimonial-card animate-fadeInUp">
+                    <p class="mb-4">"MjengoLink transformed my home renovation. The plumber I found was professional, skilled, and completed the work on time. The payment protection gave me peace of mind."</p>
+                    <div class="d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Client" class="client-avatar me-3">
+                        <div>
+                            <h6 class="fw-bold mb-0">Jane Wanjiku</h6>
+                            <small class="text-muted">Nairobi Homeowner</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card animate-fadeInUp delay-1">
+                    <p class="mb-4">"As an electrician, MjengoLink has connected me with serious clients who value quality work. The platform is easy to use and the verification process builds trust with customers."</p>
+                    <div class="d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/men/54.jpg" alt="Client" class="client-avatar me-3">
+                        <div>
+                            <h6 class="fw-bold mb-0">Joseph Omondi</h6>
+                            <small class="text-muted">Certified Electrician</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card animate-fadeInUp delay-2">
+                    <p class="mb-4">"I needed a reliable mason for my backyard project. Through MjengoLink, I found an experienced professional who delivered beyond my expectations. Will definitely use again!"</p>
+                    <div class="d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Client" class="client-avatar me-3">
+                        <div>
+                            <h6 class="fw-bold mb-0">David Kimani</h6>
+                            <small class="text-muted">Mombasa Homeowner</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container text-center">
+        <h2 class="fw-bold text-white mb-4">Ready to Start Your Project?</h2>
+        <p class="lead text-white mb-5 opacity-90">Join thousands of satisfied homeowners and skilled artisans on Kenya's leading construction platform.</p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            {% if user.is_authenticated %}
+                <a href="{% url 'projects:create' %}" class="btn btn-primary btn-lg px-5 py-3">Post a Project</a>
+            {% else %}
+                <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg px-5 py-3">Post a Project</a>
+            {% endif %}
+            <a href="{% url 'artisan_registration' %}" class="btn btn-dark btn-lg px-5 py-3">Become an Artisan</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+
+

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | MjengoLink{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="auth-form-container">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold mb-3">Welcome Back</h2>
+                        <p class="text-muted">Sign in to your MjengoLink account</p>
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" action="{% url 'users:login' %}" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username or Email</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                            <div class="invalid-feedback">
+                                Please enter your username or email.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="invalid-feedback">
+                                Please enter your password.
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                            <label class="form-check-label" for="remember">Remember me</label>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <a href="{% url 'users:password_reset' %}" class="text-decoration-none">Forgot your password?</a>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="text-muted mb-0">Don't have an account? <a href="{% url 'users:register' %}" class="text-decoration-none fw-semibold">Sign up here</a></p>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <div class="separator">or continue with</div>
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="#" class="btn btn-outline-secondary">
+                                <i class="bi bi-google me-2"></i>Google
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <p class="text-muted small">By signing in, you agree to our <a href="{% url 'terms' %}" class="text-decoration-none">Terms of Service</a> and <a href="{% url 'privacy-policy' %}" class="text-decoration-none">Privacy Policy</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .separator {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: #6c757d;
+    }
+
+    .separator::before,
+    .separator::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .separator::before {
+        margin-right: .5em;
+    }
+
+    .separator::after {
+        margin-left: .5em;
+    }
+</style>
+{% endblock %}

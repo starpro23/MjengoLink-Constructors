@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Services | MjengoLink{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-4">Our Services</h1>
+                <p class="lead mb-0 opacity-75">Comprehensive construction solutions for homeowners and businesses.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container py-5">
+        <h2 class="fw-bold text-center mb-5">For Homeowners</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-4 h-100">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Find Artisans</h4>
+                    <p class="text-muted mb-0">Browse our verified database of skilled construction professionals across all trades.</p>
+                    <ul class="mt-3 ps-3 text-muted">
+                        <li>Verified ID and credentials</li>
+                        <li>Customer ratings and reviews</li>
+                        <li>Portfolio of past work</li>
+                        <li>Background checks</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-4 h-100">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Project Management</h4>
+                    <p class="text-muted mb-0">Manage your construction projects from start to finish through our platform.</p>
+                    <ul class="mt-3 ps-3 text-muted">
+                        <li>Project tracking and milestones</li>
+                        <li>Secure messaging with artisans</li>
+                        <li>Document sharing</li>
+                        <li>Progress updates</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-4 h-100">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Payment Protection</h4>
+                    <p class="text-muted mb-0">Secure, transparent payment processing with milestone-based releases.</p>
+                    <ul class="mt-3 ps-3 text-muted">
+                        <li>M-Pesa integration</li>
+                        <li>Payment verification logs</li>
+                        <li>Dispute resolution</li>
+                        <li>Secure escrow option</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <h2 class="fw-bold text-center mb-5">For Artisans & Contractors</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-4 h-100">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-briefcase"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Find Work</h4>
+                    <p class="text-muted mb-0">Access a steady stream of construction projects that match your skills and location.</p>
+                    <ul class="mt-3 ps-3 text-muted">
+                        <li>Daily project notifications</li>
+                        <li>Bid on suitable projects</li>
+                        <li>Direct client communication</li>
+                        <li>Geographic filtering</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-4 h-100">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Build Your Profile</h4>
+                    <p class="text-muted mb-0">Showcase your skills, experience, and past projects to attract more clients.</p>
+                    <ul class="mt-3 ps-3 text-muted">
+                        <li>Professional profile page</li>
+                        <li>Portfolio uploads</li>
+                        <li>Customer reviews</li>
+                        <li>Certification display</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-4 h-100">
+                    <div class="feature-icon mx-auto">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Business Tools</h4>
+                    <p class="text-muted mb-0">Tools to help you manage and grow your construction business.</p>
+                    <ul class="mt-3 ps-3 text-muted">
+                        <li>Project management tools</li>
+                        <li>Financial tracking</li>
+                        <li>Client communication</li>
+                        <li>Marketing support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container py-5">
+        <h2 class="fw-bold text-center mb-5">Construction Trades We Cover</h2>
+        <div class="row g-4 justify-content-center">
+            {% for trade in trades %}
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                <div class="trade-item">
+                    <i class="{{ trade.icon }}"></i>
+                    <span class="fw-semibold">{{ trade.name }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{% url 'projects:browse' %}" class="btn btn-primary btn-lg px-5">Browse All Services</a>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-mjengo-primary text-white">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="fw-bold mb-3">Need a Custom Solution?</h2>
+                <p class="mb-4 opacity-90">We handle large-scale projects, commercial construction, and specialized requirements.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'contact' %}" class="btn btn-light btn-lg px-5">Contact Our Team</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
