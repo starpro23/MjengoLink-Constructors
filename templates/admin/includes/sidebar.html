@@ -1,0 +1,115 @@
+<div class="admin-sidebar">
+    <!-- User Profile -->
+    <div class="p-3 border-bottom">
+        <div class="d-flex align-items-center">
+            <div class="me-3">
+                <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <i class="bi bi-shield-check text-primary"></i>
+                </div>
+            </div>
+            <div>
+                <h6 class="mb-0 fw-bold">{{ user.get_full_name }}</h6>
+                <small class="text-muted">{{ user.groups.first.name|default:"Platform Manager" }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav flex-column py-3">
+        <div class="section-title">Pillar 1: Trust & Verification</div>
+        <a href="{% url 'admin:verification_queue' %}" class="nav-link {% if request.resolver_match.url_name == 'verification_queue' %}active{% endif %}">
+            <i class="bi bi-person-check me-2"></i>Artisan Verification Queue
+            {% if verification_count > 0 %}
+            <span class="badge bg-danger float-end">{{ verification_count }}</span>
+            {% endif %}
+        </a>
+        <a href="{% url 'admin:document_center' %}" class="nav-link">
+            <i class="bi bi-file-text me-2"></i>Document Verification
+        </a>
+        <a href="{% url 'admin:reference_checks' %}" class="nav-link">
+            <i class="bi bi-chat-quote me-2"></i>Reference Check Tracker
+        </a>
+        <a href="{% url 'admin:integrity_scores' %}" class="nav-link">
+            <i class="bi bi-bar-chart me-2"></i>Integrity Score Dashboard
+        </a>
+
+        <div class="section-title">Pillar 2: Dispute Resolution</div>
+        <a href="{% url 'admin:disputes' %}" class="nav-link">
+            <i class="bi bi-chat-dots me-2"></i>Active Disputes Board
+            {% if dispute_count > 0 %}
+            <span class="badge bg-warning float-end">{{ dispute_count }}</span>
+            {% endif %}
+        </a>
+        <a href="{% url 'admin:evidence_review' %}" class="nav-link">
+            <i class="bi bi-folder2-open me-2"></i>Evidence Review Panel
+        </a>
+        <a href="{% url 'admin:resolution_toolkit' %}" class="nav-link">
+            <i class="bi bi-tools me-2"></i>Resolution Toolkit
+        </a>
+        <a href="{% url 'admin:settlement_tracker' %}" class="nav-link">
+            <i class="bi bi-check-circle me-2"></i>Settlement Tracker
+        </a>
+
+        <div class="section-title">Pillar 3: Marketplace Operations</div>
+        <a href="{% url 'admin:transaction_map' %}" class="nav-link">
+            <i class="bi bi-map me-2"></i>Live Transaction Map
+        </a>
+        <a href="{% url 'admin:platform_health' %}" class="nav-link">
+            <i class="bi bi-heart-pulse me-2"></i>Platform Health Dashboard
+        </a>
+        <a href="{% url 'admin:anomaly_alerts' %}" class="nav-link">
+            <i class="bi bi-bell me-2"></i>Anomaly Detection Alerts
+            {% if anomaly_count > 0 %}
+            <span class="badge bg-danger float-end">{{ anomaly_count }}</span>
+            {% endif %}
+        </a>
+        <a href="{% url 'admin:pricing_intelligence' %}" class="nav-link">
+            <i class="bi bi-currency-exchange me-2"></i>Category & Pricing
+        </a>
+
+        <div class="section-title">Pillar 4: User Community</div>
+        <a href="{% url 'admin:user_analytics' %}" class="nav-link">
+            <i class="bi bi-graph-up me-2"></i>User Lifecycle Analytics
+        </a>
+        <a href="{% url 'admin:communication_moderation' %}" class="nav-link">
+            <i class="bi bi-chat-left-text me-2"></i>Communication Moderation
+        </a>
+        <a href="{% url 'admin:feedback_aggregator' %}" class="nav-link">
+            <i class="bi bi-star me-2"></i>Feedback Aggregator
+        </a>
+        <a href="{% url 'admin:policy_manager' %}" class="nav-link">
+            <i class="bi bi-gear me-2"></i>Platform Policy Manager
+        </a>
+
+        <div class="section-title">Administration</div>
+        <a href="{% url 'admin:reports' %}" class="nav-link">
+            <i class="bi bi-file-earmark-text me-2"></i>Reports & Analytics
+        </a>
+        <a href="{% url 'admin:audit_logs' %}" class="nav-link">
+            <i class="bi bi-clock-history me-2"></i>Audit Trail
+        </a>
+        <a href="{% url 'admin:admin_management' %}" class="nav-link">
+            <i class="bi bi-people me-2"></i>Admin Management
+        </a>
+        <a href="{% url 'admin:settings' %}" class="nav-link">
+            <i class="bi bi-sliders me-2"></i>System Settings
+        </a>
+    </nav>
+
+    <!-- Quick Stats -->
+    <div class="p-3 border-top">
+        <small class="text-muted d-block mb-2">Platform Status</small>
+        <div class="d-flex justify-content-between small mb-1">
+            <span>Uptime:</span>
+            <span class="text-success">99.9%</span>
+        </div>
+        <div class="d-flex justify-content-between small mb-1">
+            <span>Response Time:</span>
+            <span class="text-success">128ms</span>
+        </div>
+        <div class="d-flex justify-content-between small">
+            <span>Active Users:</span>
+            <span class="text-primary">{{ active_users_count }}</span>
+        </div>
+    </div>
+</div>

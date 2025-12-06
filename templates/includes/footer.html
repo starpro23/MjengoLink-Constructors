@@ -14,25 +14,25 @@
             <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
                 <h5 class="fw-bold mb-3 text-white">Platform</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="{% url 'how-it-works' %}" class="text-white opacity-75 text-decoration-none hover-text-white">How It Works</a></li>
-                    <li class="mb-2"><a href="{% url 'about' %}" class="text-white opacity-75 text-decoration-none hover-text-white">About Us</a></li>
-                    <li class="mb-2"><a href="{% url 'services' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Services</a></li>
-                    <li class="mb-2"><a href="{% url 'contact' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Contact</a></li>
+                    <li class="mb-2"><a href="{% url 'core:how-it-works' %}" class="text-white opacity-75 text-decoration-none hover-text-white">How It Works</a></li>
+                    <li class="mb-2"><a href="{% url 'core:about' %}" class="text-white opacity-75 text-decoration-none hover-text-white">About Us</a></li>
+                    <li class="mb-2"><a href="{% url 'core:services' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Services</a></li>
+                    <li class="mb-2"><a href="{% url 'core:contact' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Contact</a></li>
                 </ul>
             </div>
             <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
                 <h5 class="fw-bold mb-3 text-white">Support</h5>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="{% url 'help-center' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Help Center</a></li>
-                    <li class="mb-2"><a href="{% url 'safety' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Safety & Trust</a></li>
-                    <li class="mb-2"><a href="{% url 'faq' %}" class="text-white opacity-75 text-decoration-none hover-text-white">FAQ</a></li>
-                    <li class="mb-2"><a href="{% url 'contact' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Contact Us</a></li>
+                    <li class="mb-2"><a href="{% url 'core:help-center' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Help Center</a></li>
+                    <li class="mb-2"><a href="{% url 'core:safety' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Safety & Trust</a></li>
+                    <li class="mb-2"><a href="{% url 'core:faq' %}" class="text-white opacity-75 text-decoration-none hover-text-white">FAQ</a></li>
+                    <li class="mb-2"><a href="{% url 'core:contact' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Contact Us</a></li>
                 </ul>
             </div>
             <div class="col-lg-4">
                 <h5 class="fw-bold mb-3 text-white">Stay Updated</h5>
                 <p class="opacity-75 mb-3">Subscribe to our newsletter for tips and updates.</p>
-                <form method="post" action="{% url 'newsletter_subscribe' %}">
+                <form method="post" action="{% url 'core:newsletter_subscribe' %}">
                     {% csrf_token %}
                     <div class="input-group mb-3">
                         <input type="email" class="form-control" name="email" placeholder="Your email address" required>
@@ -47,8 +47,8 @@
                 <p class="mb-0 opacity-75">&copy; {% now "Y" %} MjengoLink. All rights reserved.</p>
             </div>
             <div class="col-md-6 text-center text-md-end">
-                <a href="{% url 'privacy-policy' %}" class="text-white opacity-75 me-3 text-decoration-none hover-text-white">Privacy Policy</a>
-                <a href="{% url 'terms' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Terms of Service</a>
+                <a href="{% url 'core:privacy-policy' %}" class="text-white opacity-75 me-3 text-decoration-none hover-text-white">Privacy Policy</a>
+                <a href="{% url 'core:terms' %}" class="text-white opacity-75 text-decoration-none hover-text-white">Terms of Service</a>
             </div>
         </div>
     </div>

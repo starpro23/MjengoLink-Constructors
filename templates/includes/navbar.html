@@ -8,10 +8,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'home' %}">Home</a></li>
-                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'how-it-works' %}">How It Works</a></li>
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'core:home' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'core:how-it-works' %}">How It Works</a></li>
                 <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'projects:browse' %}">Find Artisans</a></li>
-                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'about' %}">About</a></li>
+                <li class="nav-item"><a class="nav-link fw-medium" href="{% url 'core:about' %}">About</a></li>
 
                 {% if user.is_authenticated %}
                 <li class="nav-item dropdown">

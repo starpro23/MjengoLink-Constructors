@@ -29,7 +29,7 @@
 
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-5">
-                        <form method="post" action="{% url 'contact' %}" class="needs-validation" novalidate>
+                        <form method="post" action="{% url 'core:contact' %}" class="needs-validation" novalidate>
                             {% csrf_token %}
                             <div class="row g-3">
                                 <div class="col-md-6">

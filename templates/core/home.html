@@ -278,8 +278,7 @@
             {% else %}
                 <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg px-5 py-3">Post a Project</a>
             {% endif %}
-            <a href="{% url 'artisan_registration' %}" class="btn btn-dark btn-lg px-5 py-3">Become an Artisan</a>
-        </div>
+<a href="{% url 'users:artisan_profile' %}" class="btn btn-dark btn-lg px-5 py-3">Become an Artisan</a>        </div>
     </div>
 </section>
 {% endblock %}

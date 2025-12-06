@@ -1,0 +1,581 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Verification Queue | Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <!-- Header -->
+    <div class="admin-header">
+        <nav aria-label="breadcrumb" class="admin-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Verification Queue</li>
+            </ol>
+        </nav>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Trust & Verification Hub</h1>
+                <p class="text-muted mb-0">Gatekeeper for platform quality and safety. Review artisan applications.</p>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-primary">{{ pending_count }} pending</span>
+                <span class="badge bg-success ms-2">{{ approved_today }} approved today</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-value">{{ stats.avg_verification_time }}h</div>
+                <div class="metric-label">Avg Processing Time</div>
+                <div class="metric-change {% if stats.avg_verification_time <= 24 %}trend-up{% else %}trend-down{% endif %}">
+                    Target: < 24h
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-value">{{ stats.approval_rate }}%</div>
+                <div class="metric-label">Approval Rate</div>
+                <div class="metric-change trend-up">Industry avg: 65%</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-value">{{ stats.fraud_detected }}</div>
+                <div class="metric-label">Fraud Detected</div>
+                <div class="metric-change trend-down">This month</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="metric-card">
+                <div class="metric-value">{{ stats.integrity_score }}/10</div>
+                <div class="metric-label">Avg Integrity Score</div>
+                <div class="metric-change trend-up">Platform health</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Filter & Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-3">
+                            <label class="form-label">Filter by:</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="all">All Applications</option>
+                                <option value="pending" selected>Pending</option>
+                                <option value="documents_review">Documents Review</option>
+                                <option value="reference_check">Reference Check</option>
+                                <option value="awaiting_info">Awaiting Information</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Trade:</label>
+                            <select class="form-select" id="filterTrade">
+                                <option value="all">All Trades</option>
+                                <option value="plumbing">Plumbing</option>
+                                <option value="electrical">Electrical</option>
+                                <option value="masonry">Masonry</option>
+                                <option value="carpentry">Carpentry</option>
+                                <option value="painting">Painting</option>
+                                <option value="welding">Welding</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Search:</label>
+                            <input type="text" class="form-control" placeholder="Search by name, ID, or location...">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button class="btn btn-primary w-100" onclick="processBatch()">
+                                <i class="bi bi-play-circle me-1"></i>Process Batch
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Queue -->
+    <div class="row">
+        <div class="col-12">
+            <div class="admin-table">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th width="50">
+                                    <input type="checkbox" class="form-check-input" id="selectAll">
+                                </th>
+                                <th>Applicant</th>
+                                <th>Trade</th>
+                                <th>Documents</th>
+                                <th>References</th>
+                                <th>Integrity Score</th>
+                                <th>Time in Queue</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in applications %}
+                            <tr data-id="{{ application.id }}" data-status="{{ application.status }}">
+                                <td>
+                                    <input type="checkbox" class="form-check-input select-app" data-id="{{ application.id }}">
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar me-3">
+                                            {{ application.user.first_name|first|upper }}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">{{ application.user.get_full_name }}</h6>
+                                            <small class="text-muted">ID: {{ application.user.username }}</small><br>
+                                            <small class="text-muted">{{ application.user.profile.location|default:"Location not set" }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ application.trade|title }}</span><br>
+                                    <small class="text-muted">{{ application.experience_years }} years exp</small>
+                                </td>
+                                <td>
+                                    <div class="documents-list">
+                                        {% for doc in application.documents.all %}
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="small">
+                                                <i class="bi bi-file-text me-1"></i>
+                                                {{ doc.document_type|title }}
+                                            </span>
+                                            <span class="badge {% if doc.is_verified %}bg-success{% elif doc.is_rejected %}bg-danger{% else %}bg-warning{% endif %}">
+                                                {{ doc.get_status_display }}
+                                            </span>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary mt-1" onclick="viewDocuments({{ application.id }})">
+                                        <i class="bi bi-eye"></i> Review
+                                    </button>
+                                </td>
+                                <td>
+                                    {% if application.references_verified %}
+                                        <span class="badge bg-success">Verified ✓</span>
+                                    {% elif application.references_pending %}
+                                        <span class="badge bg-warning">Pending ({{ application.references_pending }})</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Not checked</span>
+                                    {% endif %}
+                                    <div class="mt-1">
+                                        <small class="text-muted">{{ application.references_positive }}/3 positive</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-success" style="width: {{ application.integrity_score }}%"></div>
+                                    </div>
+                                    <small>{{ application.integrity_score }}/100</small>
+                                    {% if application.risk_flags > 0 %}
+                                        <div class="mt-1">
+                                            <span class="badge bg-danger">{{ application.risk_flags }} risk flag(s)</span>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge {% if application.queue_time_hours > 24 %}bg-danger{% elif application.queue_time_hours > 12 %}bg-warning{% else %}bg-info{% endif %}">
+                                        {{ application.queue_time_hours }}h
+                                    </span><br>
+                                    <small class="text-muted">{{ application.created_at|date:"M d" }}</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-success" onclick="approveApplication({{ application.id }})" title="Approve">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                        <button class="btn btn-warning" onclick="requestInfo({{ application.id }})" title="Request Info">
+                                            <i class="bi bi-question-circle"></i>
+                                        </button>
+                                        <button class="btn btn-danger" onclick="rejectApplication({{ application.id }})" title="Reject">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center py-5">
+                                    <i class="bi bi-check-circle text-success fs-1 mb-3"></i>
+                                    <h5>Verification Queue is Empty</h5>
+                                    <p class="text-muted">All pending applications have been processed.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decision Statistics -->
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="admin-chart">
+                <div class="chart-header">
+                    <h5 class="chart-title">Verification Decision Analytics</h5>
+                </div>
+                <canvas id="decisionChart" height="200"></canvas>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="admin-chart">
+                <div class="chart-header">
+                    <h5 class="chart-title">Today's Summary</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Approved</span>
+                            <span class="badge bg-success">{{ stats.approved_today }}</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Rejected</span>
+                            <span class="badge bg-danger">{{ stats.rejected_today }}</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Info Requested</span>
+                            <span class="badge bg-warning">{{ stats.info_requested_today }}</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Avg Processing Time</span>
+                            <span>{{ stats.avg_processing_today }} min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Document Review Modal -->
+<div class="modal fade" id="documentModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Document Review - <span id="applicantName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="documentGallery">
+                    <!-- Documents will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="approveAllDocuments()">Approve All</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rejection Reason Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reject Application</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="rejectForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Select Reason:</label>
+                        <select class="form-select" name="reason" required>
+                            <option value="">Choose a reason...</option>
+                            <option value="fraudulent_documents">Fraudulent Documents</option>
+                            <option value="poor_quality_docs">Poor Quality Documentation</option>
+                            <option value="negative_references">Negative References</option>
+                            <option value="suspicious_activity">Suspicious Activity</option>
+                            <option value="incomplete_application">Incomplete Application</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Additional Notes:</label>
+                        <textarea class="form-control" name="notes" rows="3" placeholder="Provide specific details..."></textarea>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="ban_user" id="banUser">
+                        <label class="form-check-label" for="banUser">
+                            Permanently ban user from platform
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentApplicationId = null;
+let selectedApplications = new Set();
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Decision Analytics Chart
+    const decisionCtx = document.getElementById('decisionChart').getContext('2d');
+    new Chart(decisionCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Plumbing', 'Electrical', 'Masonry', 'Carpentry', 'Painting', 'Welding'],
+            datasets: [{
+                label: 'Approved',
+                data: [65, 78, 82, 70, 75, 68],
+                backgroundColor: '#38a169'
+            }, {
+                label: 'Rejected',
+                data: [12, 8, 5, 15, 10, 18],
+                backgroundColor: '#e53e3e'
+            }, {
+                label: 'Pending',
+                data: [23, 14, 13, 15, 15, 14],
+                backgroundColor: '#d69e2e'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Applications'
+                    }
+                }
+            }
+        }
+    });
+
+    // Select all functionality
+    document.getElementById('selectAll').addEventListener('change', function(e) {
+        const checkboxes = document.querySelectorAll('.select-app');
+        checkboxes.forEach(cb => {
+            cb.checked = e.target.checked;
+            if (e.target.checked) {
+                selectedApplications.add(cb.dataset.id);
+            } else {
+                selectedApplications.delete(cb.dataset.id);
+            }
+        });
+        updateBatchButton();
+    });
+
+    // Individual checkbox handling
+    document.querySelectorAll('.select-app').forEach(cb => {
+        cb.addEventListener('change', function(e) {
+            if (e.target.checked) {
+                selectedApplications.add(e.target.dataset.id);
+            } else {
+                selectedApplications.delete(e.target.dataset.id);
+            }
+            updateBatchButton();
+        });
+    });
+
+    // Filter functionality
+    document.getElementById('filterStatus').addEventListener('change', filterTable);
+    document.getElementById('filterTrade').addEventListener('change', filterTable);
+});
+
+function filterTable() {
+    const statusFilter = document.getElementById('filterStatus').value;
+    const tradeFilter = document.getElementById('filterTrade').value;
+
+    document.querySelectorAll('tbody tr').forEach(row => {
+        const status = row.dataset.status;
+        const trade = row.cells[2].textContent.toLowerCase();
+
+        const statusMatch = statusFilter === 'all' || status === statusFilter;
+        const tradeMatch = tradeFilter === 'all' || trade.includes(tradeFilter);
+
+        row.style.display = statusMatch && tradeMatch ? '' : 'none';
+    });
+}
+
+function viewDocuments(applicationId) {
+    currentApplicationId = applicationId;
+
+    // In production, this would fetch documents via API
+    const mockDocuments = [
+        { type: 'ID Card', url: '#', status: 'pending' },
+        { type: 'Certificate', url: '#', status: 'verified' },
+        { type: 'Portfolio', url: '#', status: 'pending' }
+    ];
+
+    const gallery = document.getElementById('documentGallery');
+    gallery.innerHTML = '';
+
+    mockDocuments.forEach(doc => {
+        gallery.innerHTML += `
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">${doc.type}</h6>
+                        <div class="mb-3" style="height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-file-text fs-1 text-muted"></i>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="badge ${doc.status === 'verified' ? 'bg-success' : 'bg-warning'}">
+                                ${doc.status === 'verified' ? 'Verified' : 'Pending'}
+                            </span>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary">
+                                    <i class="bi bi-download"></i>
+                                </button>
+                                <button class="btn btn-outline-success" onclick="verifyDocument('${doc.type}')">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="rejectDocument('${doc.type}')">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    const modal = new bootstrap.Modal(document.getElementById('documentModal'));
+    modal.show();
+}
+
+function verifyDocument(docType) {
+    alert(`Document "${docType}" marked as verified.`);
+    // In production: Make API call to update document status
+}
+
+function rejectDocument(docType) {
+    const reason = prompt(`Why are you rejecting "${docType}"?`);
+    if (reason) {
+        alert(`Document "${docType}" rejected. Reason: ${reason}`);
+        // In production: Make API call to reject document
+    }
+}
+
+function approveAllDocuments() {
+    if (confirm('Approve all documents for this application?')) {
+        alert('All documents approved. Application ready for final review.');
+        // In production: Make API call to approve all documents
+    }
+}
+
+function approveApplication(id) {
+    if (confirm('Approve this artisan application?')) {
+        // In production: Make API call to approve application
+        fetch(`/admin/api/verifications/${id}/approve/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Application approved successfully!');
+                location.reload();
+            }
+        });
+    }
+}
+
+function requestInfo(id) {
+    const infoNeeded = prompt('What information is needed from the applicant?');
+    if (infoNeeded) {
+        // In production: Make API call to request info
+        alert(`Information request sent: ${infoNeeded}`);
+    }
+}
+
+function rejectApplication(id) {
+    currentApplicationId = id;
+    const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
+    modal.show();
+}
+
+document.getElementById('rejectForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    if (confirm('Are you sure you want to reject this application? This action cannot be undone.')) {
+        // In production: Make API call to reject application
+        fetch(`/admin/api/verifications/${currentApplicationId}/reject/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Application rejected successfully.');
+                location.reload();
+            }
+        });
+    }
+});
+
+function updateBatchButton() {
+    const batchBtn = document.querySelector('button[onclick="processBatch()"]');
+    if (selectedApplications.size > 0) {
+        batchBtn.innerHTML = `<i class="bi bi-play-circle me-1"></i>Process Selected (${selectedApplications.size})`;
+        batchBtn.disabled = false;
+    } else {
+        batchBtn.innerHTML = `<i class="bi bi-play-circle me-1"></i>Process Batch`;
+        batchBtn.disabled = false;
+    }
+}
+
+function processBatch() {
+    if (selectedApplications.size === 0) {
+        alert('Please select applications to process.');
+        return;
+    }
+
+    const action = prompt('Batch action: Type "approve", "reject", or "request info"');
+    if (['approve', 'reject', 'request info'].includes(action)) {
+        // In production: Make batch API call
+        alert(`Batch ${action} initiated for ${selectedApplications.size} applications.`);
+        setTimeout(() => {
+            alert('Batch processing completed!');
+            location.reload();
+        }, 1500);
+    }
+}
+</script>
+{% endblock %}

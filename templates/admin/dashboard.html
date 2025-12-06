@@ -1,0 +1,495 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Admin Dashboard | MjengoLink{% endblock %}
+
+{% block content %}
+<div class="admin-content">
+    <!-- Header -->
+    <div class="admin-header">
+        <nav aria-label="breadcrumb" class="admin-breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">Dashboard Overview</li>
+            </ol>
+        </nav>
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>Platform Administrator Dashboard</h1>
+            <div class="text-end">
+                <span class="badge bg-secondary">{{ user.get_full_name }}</span>
+                <small class="text-muted ms-2">Last login: {{ user.last_login|date:"M d, Y H:i" }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Priority Alerts -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-urgent">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill text-danger fs-4 me-3"></i>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1 fw-bold">Critical: 3 Urgent Disputes Require Immediate Attention</h6>
+                        <p class="mb-0">Payment disputes with high-value transactions (> KES 100,000) awaiting mediation.</p>
+                    </div>
+                    <a href="{% url 'admin:disputes' %}" class="btn btn-danger btn-sm">Review Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Four-Pillar Framework -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="fw-bold mb-3">Four-Pillar Framework</h4>
+            <div class="row g-3">
+                <!-- Pillar 1: Trust & Verification -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-primary bg-opacity-10">
+                            <i class="bi bi-shield-check text-primary fs-4"></i>
+                        </div>
+                        <h3 class="stats-number">{{ stats.verification_queue }}</h3>
+                        <p class="stats-label">Pending Verifications</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="stats-trend trend-up">+12% this week</span>
+                            <a href="{% url 'admin:verification_queue' %}" class="btn btn-primary btn-sm">Review</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pillar 2: Dispute Resolution -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-warning bg-opacity-10">
+                            <i class="bi bi-chat-dots text-warning fs-4"></i>
+                        </div>
+                        <h3 class="stats-number">{{ stats.active_disputes }}</h3>
+                        <p class="stats-label">Active Disputes</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="stats-trend trend-down">-8% this week</span>
+                            <a href="{% url 'admin:disputes' %}" class="btn btn-warning btn-sm">Resolve</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pillar 3: Marketplace Health -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-success bg-opacity-10">
+                            <i class="bi bi-graph-up text-success fs-4"></i>
+                        </div>
+                        <h3 class="stats-number">{{ stats.completion_rate }}%</h3>
+                        <p class="stats-label">Project Completion Rate</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="stats-trend trend-up">+3% this week</span>
+                            <a href="{% url 'admin:marketplace' %}" class="btn btn-success btn-sm">Monitor</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pillar 4: User Growth -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="stats-card">
+                        <div class="stats-icon bg-info bg-opacity-10">
+                            <i class="bi bi-people text-info fs-4"></i>
+                        </div>
+                        <h3 class="stats-number">{{ stats.new_users }}</h3>
+                        <p class="stats-label">New Users This Week</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="stats-trend trend-up">+24% this week</span>
+                            <a href="{% url 'admin:users' %}" class="btn btn-info btn-sm">Manage</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="quick-actions">
+                <h5 class="fw-bold mb-3">Quick Actions</h5>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="{% url 'admin:verification_queue' %}" class="action-btn">
+                            <div class="action-icon">
+                                <i class="bi bi-person-add"></i>
+                            </div>
+                            <div class="action-text">
+                                <h6>Verify Artisans</h6>
+                                <p>{{ stats.verification_queue }} pending</p>
+                            </div>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'admin:disputes' %}" class="action-btn">
+                            <div class="action-icon">
+                                <i class="bi bi-chat-left-text"></i>
+                            </div>
+                            <div class="action-text">
+                                <h6>Resolve Disputes</h6>
+                                <p>{{ stats.active_disputes }} active</p>
+                            </div>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'admin:suspicious_activity' %}" class="action-btn">
+                            <div class="action-icon">
+                                <i class="bi bi-shield-exclamation"></i>
+                            </div>
+                            <div class="action-text">
+                                <h6>Anomaly Alerts</h6>
+                                <p>{{ stats.anomaly_flags }} flags</p>
+                            </div>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{% url 'admin:reports' %}" class="action-btn">
+                            <div class="action-icon">
+                                <i class="bi bi-file-text"></i>
+                            </div>
+                            <div class="action-text">
+                                <h6>Daily Reports</h6>
+                                <p>Generate trust report</p>
+                            </div>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Health Dashboard -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="admin-chart">
+                <div class="chart-header d-flex justify-content-between align-items-center">
+                    <h5 class="chart-title">Platform Health Metrics</h5>
+                    <select class="form-select form-select-sm w-auto">
+                        <option>Last 7 days</option>
+                        <option>Last 30 days</option>
+                        <option>Last 90 days</option>
+                    </select>
+                </div>
+                <canvas id="platformHealthChart" height="250"></canvas>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="admin-chart">
+                <div class="chart-header">
+                    <h5 class="chart-title">Dispute Categories</h5>
+                </div>
+                <canvas id="disputeChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Activity & Metrics -->
+    <div class="row">
+        <!-- Left Column: Live Activity -->
+        <div class="col-lg-8">
+            <div class="admin-table mb-4">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th colspan="4" class="bg-light">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>Recent Activity Requiring Attention</span>
+                                        <span class="badge bg-primary">{{ recent_activities|length }} items</span>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for activity in recent_activities %}
+                            <tr>
+                                <td width="40">
+                                    {% if activity.priority == 'high' %}
+                                        <span class="badge bg-danger">!</span>
+                                    {% elif activity.priority == 'medium' %}
+                                        <span class="badge bg-warning">!</span>
+                                    {% else %}
+                                        <span class="badge bg-info">i</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <i class="bi bi-{{ activity.icon }} text-{{ activity.color }} fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">{{ activity.title }}</h6>
+                                            <small class="text-muted">{{ activity.description }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark">{{ activity.category }}</span>
+                                </td>
+                                <td class="text-end">
+                                    <small class="text-muted">{{ activity.time }}</small>
+                                    <a href="{{ activity.link }}" class="btn btn-sm btn-outline-primary ms-2">View</a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4">
+                                    <i class="bi bi-check-circle text-success fs-1 mb-2"></i>
+                                    <p class="text-muted mb-0">All caught up! No pending activities.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Transaction Heatmap -->
+            <div class="admin-chart">
+                <div class="chart-header">
+                    <h5 class="chart-title">Live Transaction Heatmap</h5>
+                    <small class="text-muted">Active projects by location</small>
+                </div>
+                <div class="map-container" style="height: 200px; background: #f0f4f8;">
+                    <!-- Simplified heatmap visualization -->
+                    <div class="p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="heatmap-legend">
+                                <span>Low</span>
+                                <span class="heatmap-dot" style="background: #e6f7ff;"></span>
+                                <span class="heatmap-dot" style="background: #bae7ff;"></span>
+                                <span class="heatmap-dot" style="background: #69c0ff;"></span>
+                                <span class="heatmap-dot" style="background: #1890ff;"></span>
+                                <span class="heatmap-dot" style="background: #0050b3;"></span>
+                                <span>High</span>
+                            </div>
+                            <span class="badge bg-primary">{{ stats.active_projects }} active projects</span>
+                        </div>
+                        <div class="text-center py-4">
+                            <i class="bi bi-map text-muted fs-1 mb-3"></i>
+                            <p class="text-muted">Live geographic heatmap visualization would appear here</p>
+                            <small>Integration with mapping service required</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Metrics & Stats -->
+        <div class="col-lg-4">
+            <!-- Success Metrics -->
+            <div class="admin-chart mb-4">
+                <div class="chart-header">
+                    <h5 class="chart-title">Admin Performance Metrics</h5>
+                </div>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="metric-card">
+                            <div class="metric-value text-success">{{ stats.verification_turnaround }}h</div>
+                            <div class="metric-label">Avg Verification Time</div>
+                            <div class="metric-change trend-down">Target: < 24h</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-card">
+                            <div class="metric-value text-warning">{{ stats.dispute_resolution_rate }}%</div>
+                            <div class="metric-label">Dispute Resolution Rate</div>
+                            <div class="metric-change trend-up">Target: > 85%</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-card">
+                            <div class="metric-value text-info">{{ stats.platform_trust_score }}/5</div>
+                            <div class="metric-label">Platform Trust Score</div>
+                            <div class="metric-change trend-up">Target: > 4.5</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-card">
+                            <div class="metric-value text-danger">{{ stats.fraud_rate }}%</div>
+                            <div class="metric-label">Fraud Prevention Rate</div>
+                            <div class="metric-change trend-down">Target: < 1%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Retention -->
+            <div class="admin-chart mb-4">
+                <div class="chart-header">
+                    <h5 class="chart-title">User Retention Rate</h5>
+                    <small class="text-muted">Active after 30 days</small>
+                </div>
+                <div class="text-center py-3">
+                    <div class="position-relative d-inline-block">
+                        <canvas id="retentionChart" width="120" height="120"></canvas>
+                        <div class="position-absolute top-50 start-50 translate-middle">
+                            <h2 class="mb-0">{{ stats.user_retention }}%</h2>
+                            <small class="text-muted">Target: 60%</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Status -->
+            <div class="admin-chart">
+                <div class="chart-header">
+                    <h5 class="chart-title">System Status</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Verification System</span>
+                            <span class="badge bg-success">Operational</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Payment Gateway</span>
+                            <span class="badge bg-success">Operational</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Messaging System</span>
+                            <span class="badge bg-warning">Degraded</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item border-0 px-0 py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Analytics Engine</span>
+                            <span class="badge bg-success">Operational</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Platform Health Chart
+    const platformCtx = document.getElementById('platformHealthChart').getContext('2d');
+    new Chart(platformCtx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [
+                {
+                    label: 'Successful Matches',
+                    data: [65, 78, 90, 88, 95, 85, 92],
+                    borderColor: '#38a169',
+                    backgroundColor: 'rgba(56, 161, 105, 0.1)',
+                    tension: 0.3
+                },
+                {
+                    label: 'Completion Rate',
+                    data: [78, 82, 85, 88, 90, 87, 92],
+                    borderColor: '#3182ce',
+                    backgroundColor: 'rgba(49, 130, 206, 0.1)',
+                    tension: 0.3
+                },
+                {
+                    label: 'User Retention',
+                    data: [62, 65, 68, 72, 75, 73, 78],
+                    borderColor: '#d69e2e',
+                    backgroundColor: 'rgba(214, 158, 46, 0.1)',
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Dispute Categories Chart
+    const disputeCtx = document.getElementById('disputeChart').getContext('2d');
+    new Chart(disputeCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Payment', 'Quality', 'No-show', 'Communication'],
+            datasets: [{
+                data: [45, 30, 15, 10],
+                backgroundColor: [
+                    '#e53e3e',
+                    '#d69e2e',
+                    '#3182ce',
+                    '#718096'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Retention Chart
+    const retentionCtx = document.getElementById('retentionChart').getContext('2d');
+    new Chart(retentionCtx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [{{ stats.user_retention }}, 100 - {{ stats.user_retention }}],
+                backgroundColor: [
+                    '#38a169',
+                    '#e2e8f0'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: false
+                }
+            }
+        }
+    });
+
+    // Auto-refresh dashboard every 5 minutes
+    setInterval(function() {
+        // In production, this would fetch updated data
+        console.log('Dashboard auto-refresh triggered');
+    }, 300000);
+});
+</script>
+{% endblock %}
