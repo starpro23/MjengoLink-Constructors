@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Post a Project - MjengoLink{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Progress Steps -->
+            <div class="mb-5">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-center">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">1</div>
+                        <small class="d-block fw-semibold">Details</small>
+                    </div>
+                    <div class="flex-grow-1 mx-3">
+                        <div class="progress" style="height: 3px;">
+                            <div class="progress-bar" role="progressbar" style="width: 33%;"></div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="rounded-circle bg-light border d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">2</div>
+                        <small class="d-block text-muted">Budget & Timeline</small>
+                    </div>
+                    <div class="flex-grow-1 mx-3">
+                        <div class="progress" style="height: 3px;">
+                            <div class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="rounded-circle bg-light border d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">3</div>
+                        <small class="d-block text-muted">Review</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-lg border-0 animate-fadeInUp">
+                <div class="card-body p-5">
+                    <h1 class="h2 fw-bold mb-1">Post Your Project</h1>
+                    <p class="text-muted mb-4">Fill in the details to find the perfect artisan for your job</p>
+
+                    <form>
+                        <!-- Project Title -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Project Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-lg" placeholder="e.g., Bathroom Renovation or House Wiring Installation">
+                            <small class="text-muted">Be specific about what you need</small>
+                        </div>
+
+                        <!-- Category Selection -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
+                            <div class="row g-3">
+                                {% for category in categories %}
+                                <div class="col-md-4">
+                                    <div class="form-check card border p-3 h-100">
+                                        <input class="form-check-input" type="radio" name="category" id="{{ category.id }}">
+                                        <label class="form-check-label w-100" for="{{ category.id }}">
+                                            <div class="text-center">
+                                                <i class="bi {{ category.icon }} display-6 text-mjengo-primary mb-2"></i>
+                                                <h6 class="fw-bold mb-0">{{ category.name }}</h6>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Location <span class="text-danger">*</span></label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <select class="form-select">
+                                        <option selected>Select County</option>
+                                        <option>Nairobi</option>
+                                        <option>Mombasa</option>
+                                        <option>Kisumu</option>
+                                        <option>Nakuru</option>
+                                        <option>Kiambu</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Area/ Estate">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Project Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control" rows="5" placeholder="Describe your project in detail..."></textarea>
+                            <small class="text-muted">Include details like room size, existing conditions, specific requirements</small>
+                        </div>
+
+                        <!-- Required Skills -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Required Skills/Qualifications</label>
+                            <div class="d-flex flex-wrap gap-2 mb-3" id="skillsContainer">
+                                <!-- Skills will be added here -->
+                            </div>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="skillInput" placeholder="Add a required skill">
+                                <button class="btn btn-outline-primary" type="button" id="addSkillBtn">Add</button>
+                            </div>
+                        </div>
+
+                        <!-- Upload Images -->
+                        <div class="mb-5">
+                            <label class="form-label fw-semibold">Upload Photos (Optional)</label>
+                            <div class="border rounded p-4 text-center">
+                                <i class="bi bi-cloud-arrow-up display-4 text-muted mb-3"></i>
+                                <h5 class="fw-bold mb-2">Drag & drop photos here</h5>
+                                <p class="text-muted mb-3">or click to browse</p>
+                                <input type="file" class="d-none" id="fileUpload" multiple accept="image/*">
+                                <label for="fileUpload" class="btn btn-outline-primary">Choose Files</label>
+                                <small class="d-block text-muted mt-2">Up to 5 photos, 5MB each</small>
+                            </div>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="d-flex justify-content-between pt-4">
+                            <a href="{{ url_for('projects.list') }}" class="btn btn-outline-primary px-4">Cancel</a>
+                            <button type="button" class="btn btn-primary px-5">Next: Budget & Timeline <i class="bi bi-arrow-right ms-2"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Skills tagging functionality
+    document.getElementById('addSkillBtn').addEventListener('click', function() {
+        const skillInput = document.getElementById('skillInput');
+        const skill = skillInput.value.trim();
+
+        if (skill) {
+            const skillBadge = document.createElement('span');
+            skillBadge.className = 'badge bg-light text-dark border d-flex align-items-center';
+            skillBadge.innerHTML = `
+                ${skill}
+                <button type="button" class="btn-close btn-close-sm ms-2" onclick="this.parentElement.remove()"></button>
+            `;
+            document.getElementById('skillsContainer').appendChild(skillBadge);
+            skillInput.value = '';
+        }
+    });
+
+    // Allow Enter key to add skills
+    document.getElementById('skillInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('addSkillBtn').click();
+        }
+    });
+
+    // File upload preview
+    document.getElementById('fileUpload').addEventListener('change', function(e) {
+        const files = e.target.files;
+        // Handle file preview logic here
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} - MjengoLink{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <!-- Back Navigation -->
+    <div class="mb-4">
+        <a href="{{ url_for('projects.list') }}" class="text-decoration-none text-mjengo-primary">
+            <i class="bi bi-arrow-left me-2"></i>Back to Projects
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Project Header -->
+            <div class="card shadow-sm border-0 mb-4 animate-fadeInUp">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-mjengo-primary mb-2">{{ project.category }}</span>
+                            <h1 class="h2 fw-bold mb-2">{{ project.title }}</h1>
+                            <div class="d-flex align-items-center text-muted mb-3">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                <span class="me-3">{{ project.location }}</span>
+                                <i class="bi bi-calendar me-1"></i>
+                                <span>Posted {{ project.posted_date }}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-primary"><i class="bi bi-bookmark me-2"></i>Save</button>
+                    </div>
+
+                    <!-- Project Budget & Timeline -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <small class="text-muted d-block mb-1">Budget</small>
+                                <h3 class="fw-bold text-mjengo-accent mb-0">{{ project.budget }}</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <small class="text-muted d-block mb-1">Timeline</small>
+                                <h5 class="fw-bold mb-0">{{ project.duration }}</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <small class="text-muted d-block mb-1">Proposals</small>
+                                <h5 class="fw-bold mb-0">{{ project.proposal_count }}</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project Description -->
+                    <div class="mb-5">
+                        <h4 class="fw-bold mb-3">Project Description</h4>
+                        <p class="lead mb-4">{{ project.summary }}</p>
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-2">Scope of Work:</h6>
+                            <ul class="list-unstyled">
+                                {% for task in project.tasks %}
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-mjengo-accent me-2"></i>
+                                    {{ task }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h6 class="fw-bold mb-2">Requirements:</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for skill in project.required_skills %}
+                                <span class="badge bg-light text-dark border">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Client Information -->
+                    <div class="card border mb-4">
+                        <div class="card-body">
+                            <h5 class="fw-bold mb-3">About the Client</h5>
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="bg-mjengo-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <span class="text-white fw-bold">{{ client.initials }}</span>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="fw-bold mb-1">{{ client.name }}</h6>
+                                    <p class="text-muted small mb-2">
+                                        <i class="bi bi-star-fill text-warning me-1"></i>
+                                        {{ client.rating }} • {{ client.completed_projects }} projects completed
+                                    </p>
+                                    <p class="small mb-0">{{ client.bio }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Similar Projects -->
+            <div class="mb-5">
+                <h4 class="fw-bold mb-4">Similar Projects</h4>
+                <div class="row g-3">
+                    {% for similar in similar_projects %}
+                    <div class="col-md-6">
+                        <div class="card border h-100">
+                            <div class="card-body">
+                                <span class="badge bg-mjengo-primary mb-2">{{ similar.category }}</span>
+                                <h6 class="fw-bold">{{ similar.title }}</h6>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <small class="text-muted">{{ similar.location }}</small>
+                                    <span class="fw-bold text-mjengo-accent">{{ similar.budget }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Apply Card -->
+            <div class="card shadow-lg border-0 sticky-top" style="top: 100px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Submit Your Proposal</h5>
+
+                    {% if user_applied %}
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        You've already applied to this project
+                    </div>
+                    {% else %}
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Your Bid (KES)</label>
+                            <input type="number" class="form-control" placeholder="Enter your bid amount">
+                            <small class="text-muted">Client's budget: {{ project.budget }}</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Estimated Timeline</label>
+                            <input type="text" class="form-control" placeholder="e.g., 2 weeks">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Cover Letter</label>
+                            <textarea class="form-control" rows="4" placeholder="Why are you the right artisan for this job?"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold">
+                            <i class="bi bi-send me-2"></i>Submit Proposal
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <small class="text-muted d-block mb-2">Application closes in</small>
+                        <h5 class="fw-bold text-mjengo-primary">3 days, 14 hours</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

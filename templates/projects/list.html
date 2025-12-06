@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Available Projects - MjengoLink{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-4">
+    <!-- Page Header -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="fw-bold mb-3">Find Construction Projects</h1>
+            <p class="lead text-muted mb-4">Browse available projects and apply for ones that match your skills</p>
+
+            <!-- Search & Filter Bar -->
+            <div class="card shadow-sm border-0 p-4 animate-fadeInUp">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control border-start-0" placeholder="Search projects...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>All Categories</option>
+                            <option>Plumbing</option>
+                            <option>Electrical</option>
+                            <option>Masonry</option>
+                            <option>Carpentry</option>
+                            <option>Painting</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select">
+                            <option selected>Any Location</option>
+                            <option>Nairobi</option>
+                            <option>Mombasa</option>
+                            <option>Kisumu</option>
+                            <option>Nakuru</option>
+                            <option>Eldoret</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary w-100">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold">Available Projects <span class="badge bg-mjengo-secondary">24</span></h3>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary active">Latest</button>
+                    <button type="button" class="btn btn-outline-primary">Ending Soon</button>
+                    <button type="button" class="btn btn-outline-primary">Highest Budget</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Card 1 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 animate-fadeInUp">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-mjengo-primary mb-2">Plumbing</span>
+                            <h5 class="fw-bold mb-1">Bathroom Renovation</h5>
+                            <p class="text-muted mb-0"><i class="bi bi-geo-alt me-1"></i>Westlands, Nairobi</p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm"><i class="bi bi-bookmark"></i></button>
+                    </div>
+
+                    <p class="card-text mb-4">Complete bathroom renovation including new fixtures, tiling, and plumbing work. Need experienced plumber with tiling skills.</p>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-calendar text-mjengo-primary me-2"></i>
+                                <small class="text-muted">Start: 15 May</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-clock text-mjengo-primary me-2"></i>
+                                <small class="text-muted">2-3 weeks</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="fw-bold text-mjengo-accent mb-0">Ksh 45,000</h4>
+                            <small class="text-muted">Budget</small>
+                        </div>
+                        <div class="text-end">
+                            <small class="d-block text-muted mb-1">8 proposals</small>
+                            <a href="#" class="btn btn-primary btn-sm">Apply Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Card 2 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 animate-fadeInUp delay-1">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-mjengo-accent mb-2">Electrical</span>
+                            <h5 class="fw-bold mb-1">House Wiring Installation</h5>
+                            <p class="text-muted mb-0"><i class="bi bi-geo-alt me-1"></i>Kilimani, Nairobi</p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm"><i class="bi bi-bookmark"></i></button>
+                    </div>
+
+                    <p class="card-text mb-4">Complete electrical wiring for new 4-bedroom house. Must have certification and own tools. Experience with smart home systems a plus.</p>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-calendar text-mjengo-primary me-2"></i>
+                                <small class="text-muted">Start: ASAP</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-clock text-mjengo-primary me-2"></i>
+                                <small class="text-muted">4-5 weeks</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="fw-bold text-mjengo-accent mb-0">Ksh 120,000</h4>
+                            <small class="text-muted">Budget</small>
+                        </div>
+                        <div class="text-end">
+                            <small class="d-block text-muted mb-1">12 proposals</small>
+                            <a href="#" class="btn btn-primary btn-sm">Apply Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Card 3 -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 animate-fadeInUp delay-2">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-mjengo-secondary mb-2">Masonry</span>
+                            <h5 class="fw-bold mb-1">Boundary Wall Construction</h5>
+                            <p class="text-muted mb-0"><i class="bi bi-geo-alt me-1"></i>Ruiru, Kiambu</p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm"><i class="bi bi-bookmark"></i></button>
+                    </div>
+
+                    <p class="card-text mb-4">Construct 50-meter stone boundary wall with gate pillars. Must provide materials estimate. Team of 3-4 masons required.</p>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-calendar text-mjengo-primary me-2"></i>
+                                <small class="text-muted">Start: 20 May</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-clock text-mjengo-primary me-2"></i>
+                                <small class="text-muted">2 weeks</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="fw-bold text-mjengo-accent mb-0">Ksh 85,000</h4>
+                            <small class="text-muted">Budget</small>
+                        </div>
+                        <div class="text-end">
+                            <small class="d-block text-muted mb-1">5 proposals</small>
+                            <a href="#" class="btn btn-primary btn-sm">Apply Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State (for no projects) -->
+    <!-- <div class="text-center py-5">
+        <div class="mb-4">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+        </div>
+        <h3 class="fw-bold mb-3">No Projects Available</h3>
+        <p class="text-muted mb-4">Check back later or try adjusting your filters</p>
+        <a href="#" class="btn btn-primary">Clear Filters</a>
+    </div> -->
+
+    <!-- Pagination -->
+    <nav aria-label="Project pagination">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">Previous</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+{% endblock %}
