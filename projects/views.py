@@ -81,6 +81,11 @@ class ProjectListView(ListView):
 
         return queryset
 
+    def your_view(request):
+        context = {
+            'rating_range': range(5),  # or range(1, 6) depending on your needs
+        }
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 

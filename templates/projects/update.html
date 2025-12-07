@@ -1,0 +1,331 @@
+<!-- templates/dashboard/client/update_project.html -->
+{% extends 'projects/project_dashboard.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-edit me-2"></i>Edit Project: {{ project.title }}
+                        </h4>
+                        <div class="project-status">
+                            <span class="badge {% if project.status == 'open' %}bg-success{% else %}bg-warning{% endif %}">
+                                {{ project.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- Project Stats -->
+                    {% if project.bids.exists %}
+                    <div class="alert alert-info">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-info-circle me-2"></i>
+                                This project has <strong>{{ project.bids.count }}</strong> bid(s)
+                            </div>
+                            <a href="{% url 'project_bids' project.id %}" class="btn btn-sm btn-outline-info">
+                                View Bids
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Update Form -->
+                    <form method="post" enctype="multipart/form-data" id="updateProjectForm">
+                        {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                {{ form.title|as_crispy_field }}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                {{ form.category|as_crispy_field }}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                {{ form.location|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.budget_range_min|as_crispy_field }}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                {{ form.budget_range_max|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.timeline_days|as_crispy_field }}
+                            <small class="text-muted">Number of days you expect the project to take</small>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.description|as_crispy_field }}
+                        </div>
+
+                        <!-- Project Images Section -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Project Images</label>
+                            <div id="imageUploads" class="mb-3">
+                                {% if project.images.all %}
+                                    <div class="row" id="existingImages">
+                                        {% for image in project.images.all %}
+                                        <div class="col-md-3 mb-3 image-item">
+                                            <div class="card">
+                                                <img src="{{ image.image.url }}" class="card-img-top" alt="Project image" style="height: 100px; object-fit: cover;">
+                                                <div class="card-body p-2 text-center">
+                                                    <button type="button" class="btn btn-sm btn-danger remove-image" data-image-id="{{ image.id }}">
+                                                        <i class="fas fa-trash"></i> Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <div class="mb-3">
+                                    <label for="new_images" class="form-label">Add More Images</label>
+                                    <input type="file" class="form-control" id="new_images" name="images" multiple accept="image/*">
+                                    <small class="text-muted">You can select multiple images (Max 5MB each)</small>
+                                </div>
+
+                                <div id="imagePreview" class="row mt-3"></div>
+                            </div>
+                        </div>
+
+                        <!-- Project Status Update -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Update Project Status</label>
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="status" id="statusOpen"
+                                               value="open" {% if project.status == 'open' %}checked{% endif %}>
+                                        <label class="form-check-label" for="statusOpen">
+                                            <span class="badge bg-success">Open</span><br>
+                                            <small>Accepting new bids</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="status" id="statusAssigned"
+                                               value="assigned" {% if project.status == 'assigned' %}checked{% endif %}>
+                                        <label class="form-check-label" for="statusAssigned">
+                                            <span class="badge bg-primary">Assigned</span><br>
+                                            <small>Project awarded</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="status" id="statusProgress"
+                                               value="in_progress" {% if project.status == 'in_progress' %}checked{% endif %}>
+                                        <label class="form-check-label" for="statusProgress">
+                                            <span class="badge bg-info">In Progress</span><br>
+                                            <small>Work ongoing</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="status" id="statusCompleted"
+                                               value="completed" {% if project.status == 'completed' %}checked{% endif %}>
+                                        <label class="form-check-label" for="statusCompleted">
+                                            <span class="badge bg-secondary">Completed</span><br>
+                                            <small>Project finished</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <div>
+                                <a href="{% url 'my_projects' %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left"></i> Back to Projects
+                                </a>
+                                <a href="{% url 'project_detail' project.id %}" class="btn btn-outline-info ms-2">
+                                    <i class="fas fa-eye"></i> View Project
+                                </a>
+                            </div>
+
+                            <div>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="fas fa-trash"></i> Delete Project
+                                </button>
+                                <button type="submit" class="btn btn-primary ms-2">
+                                    <i class="fas fa-save"></i> Update Project
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Project Activity Log -->
+                <div class="card-footer bg-light">
+                    <h6 class="mb-3"><i class="fas fa-history me-2"></i>Project Activity</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <small><i class="fas fa-calendar-plus text-primary me-2"></i>Created: {{ project.created_at|date:"M d, Y H:i" }}</small>
+                        </li>
+                        <li class="list-group-item">
+                            <small><i class="fas fa-edit text-info me-2"></i>Last updated: {{ project.updated_at|date:"M d, Y H:i" }}</small>
+                        </li>
+                        {% if project.assigned_to %}
+                        <li class="list-group-item">
+                            <small><i class="fas fa-user-check text-success me-2"></i>Assigned to: {{ project.assigned_to.username }}</small>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Delete Project
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the project <strong>"{{ project.title }}"</strong>?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Warning:</strong> This action cannot be undone. All bids associated with this project will also be deleted.
+                </div>
+                <p class="mb-0">Type <code>DELETE</code> to confirm:</p>
+                <input type="text" id="deleteConfirm" class="form-control mt-2" placeholder="Type DELETE here">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="{% url 'delete_project' project.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" id="deleteBtn" class="btn btn-danger" disabled>
+                        <i class="fas fa-trash"></i> Delete Project
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.project-card .card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.image-item {
+    position: relative;
+}
+
+.image-item .card {
+    border: 2px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.image-item .card:hover {
+    border-color: #dc3545;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.form-check-label .badge {
+    font-size: 0.9em;
+}
+</style>
+
+<script>
+// Image preview for new uploads
+document.getElementById('new_images').addEventListener('change', function(e) {
+    const preview = document.getElementById('imagePreview');
+    preview.innerHTML = '';
+
+    for (const file of e.target.files) {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 mb-3';
+
+                col.innerHTML = `
+                    <div class="card">
+                        <img src="${e.target.result}" class="card-img-top" style="height: 100px; object-fit: cover;">
+                        <div class="card-body p-2">
+                            <small class="text-muted">${file.name}</small>
+                        </div>
+                    </div>
+                `;
+                preview.appendChild(col);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+});
+
+// Remove existing image
+document.querySelectorAll('.remove-image').forEach(button => {
+    button.addEventListener('click', function() {
+        const imageId = this.dataset.imageId;
+        const imageItem = this.closest('.image-item');
+
+        fetch(`/projects/image/${imageId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                imageItem.remove();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+});
+
+// Delete confirmation
+document.getElementById('deleteConfirm').addEventListener('input', function() {
+    const deleteBtn = document.getElementById('deleteBtn');
+    deleteBtn.disabled = this.value !== 'DELETE';
+});
+
+// Budget validation
+document.querySelector('input[name="budget_range_min"]').addEventListener('change', validateBudget);
+document.querySelector('input[name="budget_range_max"]').addEventListener('change', validateBudget);
+
+function validateBudget() {
+    const min = parseFloat(document.querySelector('input[name="budget_range_min"]').value);
+    const max = parseFloat(document.querySelector('input[name="budget_range_max"]').value);
+
+    if (min && max && min > max) {
+        alert('Minimum budget cannot be greater than maximum budget!');
+        document.querySelector('input[name="budget_range_min"]').value = '';
+        document.querySelector('input[name="budget_range_max"]').value = '';
+    }
+}
+</script>
+{% endblock %}

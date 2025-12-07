@@ -14,6 +14,7 @@ urlpatterns = [
     path('browse/', views.BrowseProjectsView.as_view(), name='browse'),
     path('search/', views.ProjectSearchView.as_view(), name='search'),
     path('create/', views.ProjectCreateView.as_view(), name='create'),
+# In your urls.py
     path('my-projects/', views.MyProjectsView.as_view(), name='my_projects'),
     path('dashboard/', views.ProjectDashboardView.as_view(), name='dashboard'),
 

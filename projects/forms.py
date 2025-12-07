@@ -62,11 +62,17 @@ class ProjectForm(forms.ModelForm):
             if budget_max > 100000000:  # 100 million KES limit
                 raise ValidationError("Maximum budget cannot exceed KES 100,000,000.")
 
-        # Validate bidding deadline
+        # Validate bidding deadline - FIXED for DateTimeField
         if bidding_deadline:
-            if bidding_deadline < timezone.now().date():
+            # For DateTimeField, use timezone.now() directly (no .date())
+            now = timezone.now()
+
+            if bidding_deadline < now:
                 raise ValidationError("Bidding deadline cannot be in the past.")
-            if bidding_deadline > timezone.now().date() + timezone.timedelta(days=90):
+
+            # For 90 days comparison, you can compare dates
+            from datetime import timedelta
+            if bidding_deadline.date() > (now + timedelta(days=90)).date():
                 raise ValidationError("Bidding deadline cannot be more than 90 days from now.")
 
         return cleaned_data

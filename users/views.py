@@ -1,3 +1,4 @@
+# users/views.py
 """
 User Views for MVP
 Only essential views: register, login, logout, profile
@@ -6,28 +7,13 @@ Only essential views: register, login, logout, profile
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User  # ADD THIS IMPORT
 from django.contrib import messages
 from .forms import UserRegistrationForm, UserProfileForm, ArtisanProfileForm, LoginForm
 from .models import ArtisanProfile
 
-#
-# def artisan_register(request):
-#     """
-#     Special registration flow for artisans
-#     """
-#     if request.user.is_authenticated:
-#         # If user is already logged in and is an artisan, go to profile
-#         if hasattr(request.user, 'profile') and request.user.profile.user_type == 'artisan':
-#             return redirect('users:artisan_profile')
-#         # If logged in but not artisan, go to profile edit
-#         elif request.user.is_authenticated:
-#             messages.info(request, 'Please update your profile to artisan type first.')
-#             return redirect('users:profile_edit')
-#
-#     # For non-logged in users, redirect to regular registration
-#     # but we'll pass a parameter to indicate artisan registration
-#     messages.info(request, 'Please register first, then select "Artisan" as your user type.')
-#     return redirect('users:register')
+def dashboard_view(request):
+    return render(request, 'users/dashboard.html')
 
 
 def register(request):
@@ -47,11 +33,13 @@ def register(request):
             if user.profile.user_type == 'artisan':
                 return redirect('users:artisan_profile')
             return redirect('home')
+        else:
+            # Print form errors for debugging
+            print("Form errors:", form.errors)
     else:
         form = UserRegistrationForm()
 
     return render(request, 'users/register.html', {'form': form})
-
 
 
 def login_view(request):
@@ -62,16 +50,41 @@ def login_view(request):
         return redirect('home')
 
     if request.method == 'POST':
-        email = request.POST.get('email')
+        username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request, username=email, password=password)
+
+        # Debug print
+        print(f"Login attempt - Username: {username}")
+
+        # First try to authenticate with provided username
+        user = authenticate(request, username=username, password=password)
+
+        # If that fails, check if it's an email and try to authenticate
+        if user is None and '@' in username:
+            try:
+                # Find user by email
+                user_by_email = User.objects.get(email=username)
+                # Try authenticating with actual username
+                user = authenticate(request, username=user_by_email.username, password=password)
+            except User.DoesNotExist:
+                pass
 
         if user is not None:
             login(request, user)
-            messages.success(request, f'Welcome back, {user.first_name}!')
-            return redirect('home')
+            messages.success(request, f'Welcome back, {user.first_name or user.username}!')
+
+            # Redirect based on user type
+            if hasattr(user, 'profile'):
+                if user.profile.user_type == 'admin':
+                    return redirect('admin_dashboard')
+                elif user.profile.user_type == 'artisan':
+                    return redirect('artisan_dashboard')
+                else:
+                    return redirect('client_dashboard')
+            else:
+                return redirect('home')
         else:
-            messages.error(request, 'Invalid email or password.')
+            messages.error(request, 'Invalid username or password.')
 
     return render(request, 'users/login.html')
 
@@ -138,7 +151,7 @@ def artisan_profile(request):
 
     try:
         artisan_profile = request.user.artisan_profile
-    except:
+    except ArtisanProfile.DoesNotExist:
         artisan_profile = ArtisanProfile.objects.create(user=request.user)
 
     if request.method == 'POST':

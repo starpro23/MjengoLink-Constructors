@@ -1,3 +1,4 @@
+# users/urls.py
 """
 URLs for Users app (MVP)
 Only essential URLs for authentication and profiles
@@ -15,8 +16,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 
-    # Add this line for artisan registration:
-    # path('artisan/register/', views.artisan_register, name='artisan_registration'),
+    path('dashboard/', views.dashboard_view, name='dashboard'),
     # Profile
     path('profile/', views.profile_view, name='profile'),
     path('profile/edit/', views.profile_edit, name='profile_edit'),
@@ -25,7 +25,9 @@ urlpatterns = [
     # Password reset (using Django's built-in)
     path('password-reset/',
          auth_views.PasswordResetView.as_view(
-             template_name='users/password_reset.html'
+             template_name='users/password_reset.html',
+             email_template_name='users/password_reset_email.html',
+             subject_template_name='users/password_reset_subject.txt'
          ),
          name='password_reset'),
     path('password-reset/done/',

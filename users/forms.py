@@ -1,16 +1,10 @@
-"""
-User Forms for MVP
-Essential forms for user registration and profile management
-"""
-
+# users/forms.py
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
-import re
-
 from .models import UserProfile, ArtisanProfile
+
 
 class UserRegistrationForm(UserCreationForm):
     """
@@ -36,14 +30,14 @@ class UserRegistrationForm(UserCreationForm):
         widget=forms.TextInput(attrs={'placeholder': 'Phone number'})
     )
     user_type = forms.ChoiceField(
-        choices=UserProfile.USER_TYPE_CHOICES,  # Uses model directly
+        choices=UserProfile.USER_TYPE_CHOICES,
         widget=forms.RadioSelect,
         initial='homeowner'
     )
 
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'phone', 'user_type', 'password1', 'password2']
+        fields = ['username', 'email', 'first_name', 'last_name', 'phone', 'user_type', 'password1', 'password2']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -53,8 +47,9 @@ class UserRegistrationForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.username = self.cleaned_data['email']
         user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
 
         if commit:
             user.save()
@@ -70,10 +65,12 @@ class UserRegistrationForm(UserCreationForm):
 
         return user
 
+
 class UserProfileForm(forms.ModelForm):
     """
     User profile update form for MVP
     """
+
     class Meta:
         model = UserProfile
         fields = ['phone', 'location', 'bio', 'profile_picture']
@@ -81,10 +78,12 @@ class UserProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'rows': 3}),
         }
 
+
 class ArtisanProfileForm(forms.ModelForm):
     """
     Artisan profile form for MVP
     """
+
     class Meta:
         model = ArtisanProfile
         fields = ['trade', 'experience_years', 'skills']
@@ -92,9 +91,14 @@ class ArtisanProfileForm(forms.ModelForm):
             'skills': forms.Textarea(attrs={'rows': 2}),
         }
 
+
 class LoginForm(forms.Form):
     """
     Simple login form for MVP
     """
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Email address'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Password'}))
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Username or Email'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
+    )
