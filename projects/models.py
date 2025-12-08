@@ -47,7 +47,8 @@ class Project(models.Model):
         ('urgent', 'Urgent - Within 3 days'),
     ]
 
-    homeowner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posted_projects')
+    # TO this (correct - each field on its own line):
+    homeowner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projects', null=True, blank=True)
     title = models.CharField(max_length=200)
     description = models.TextField()
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
