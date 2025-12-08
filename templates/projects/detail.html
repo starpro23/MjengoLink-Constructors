@@ -19,13 +19,13 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start mb-3">
                         <div>
-                            <span class="badge bg-mjengo-primary mb-2">{{ project.category }}</span>
+                            <span class="badge bg-mjengo-primary mb-2">{{ project.get_category_display }}</span>
                             <h1 class="h2 fw-bold mb-2">{{ project.title }}</h1>
                             <div class="d-flex align-items-center text-muted mb-3">
                                 <i class="bi bi-geo-alt me-1"></i>
                                 <span class="me-3">{{ project.location }}</span>
                                 <i class="bi bi-calendar me-1"></i>
-                                <span>Posted {{ project.posted_date }}</span>
+                                <span>Posted {{ project.posted_at|date:"M d, Y" }}</span>
                             </div>
                         </div>
                         <button class="btn btn-outline-primary"><i class="bi bi-bookmark me-2"></i>Save</button>
@@ -35,20 +35,22 @@
                     <div class="row g-4 mb-4">
                         <div class="col-md-4">
                             <div class="p-3 bg-light rounded">
-                                <small class="text-muted d-block mb-1">Budget</small>
-                                <h3 class="fw-bold text-mjengo-accent mb-0">{{ project.budget }}</h3>
+                                <small class="text-muted d-block mb-1">Budget Range</small>
+                                <h3 class="fw-bold text-mjengo-accent mb-0">
+                                    KES {{ project.budget_min|floatformat:0 }} - {{ project.budget_max|floatformat:0 }}
+                                </h3>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="p-3 bg-light rounded">
                                 <small class="text-muted d-block mb-1">Timeline</small>
-                                <h5 class="fw-bold mb-0">{{ project.duration }}</h5>
+                                <h5 class="fw-bold mb-0">{{ project.preferred_timeline }}</h5>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="p-3 bg-light rounded">
-                                <small class="text-muted d-block mb-1">Proposals</small>
-                                <h5 class="fw-bold mb-0">{{ project.proposal_count }}</h5>
+                                <small class="text-muted d-block mb-1">Bids</small>
+                                <h5 class="fw-bold mb-0">{{ project.bid_count }}</h5>
                             </div>
                         </div>
                     </div>
@@ -56,72 +58,75 @@
                     <!-- Project Description -->
                     <div class="mb-5">
                         <h4 class="fw-bold mb-3">Project Description</h4>
-                        <p class="lead mb-4">{{ project.summary }}</p>
+                        <p class="lead mb-4">{{ project.description }}</p>
+
+                        {% if project.special_requirements %}
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-2">Special Requirements:</h6>
+                            <p>{{ project.special_requirements }}</p>
+                        </div>
+                        {% endif %}
 
                         <div class="mb-4">
-                            <h6 class="fw-bold mb-2">Scope of Work:</h6>
-                            <ul class="list-unstyled">
-                                {% for task in project.tasks %}
-                                <li class="mb-2">
-                                    <i class="bi bi-check-circle-fill text-mjengo-accent me-2"></i>
-                                    {{ task }}
-                                </li>
-                                {% endfor %}
-                            </ul>
+                            <h6 class="fw-bold mb-2">Materials Provided:</h6>
+                            <p>{{ project.materials_provided|yesno:"Yes,No,Not specified" }}</p>
                         </div>
 
                         <div>
-                            <h6 class="fw-bold mb-2">Requirements:</h6>
-                            <div class="d-flex flex-wrap gap-2">
-                                {% for skill in project.required_skills %}
-                                <span class="badge bg-light text-dark border">{{ skill }}</span>
-                                {% endfor %}
-                            </div>
+                            <h6 class="fw-bold mb-2">Area Size:</h6>
+                            <p>{{ project.area_size|default:"Not specified" }}</p>
+                        </div>
+
+                        <div class="mt-4">
+                            <h6 class="fw-bold mb-2">Urgency:</h6>
+                            <span class="badge
+                                {% if project.urgency == 'high' %}bg-danger
+                                {% elif project.urgency == 'medium' %}bg-warning
+                                {% else %}bg-info{% endif %}">
+                                {{ project.get_urgency_display }}
+                            </span>
                         </div>
                     </div>
 
                     <!-- Client Information -->
+                    {% if project.homeowner %}
                     <div class="card border mb-4">
                         <div class="card-body">
                             <h5 class="fw-bold mb-3">About the Client</h5>
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0">
-                                    <div class="bg-mjengo-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                        <span class="text-white fw-bold">{{ client.initials }}</span>
-                                    </div>
+                                    {% if project.homeowner.profile.profile_picture %}
+                                        <img src="{{ project.homeowner.profile.profile_picture.url }}"
+                                             alt="Profile Picture"
+                                             class="rounded-circle"
+                                             width="60"
+                                             height="60">
+                                    {% else %}
+                                        <div class="bg-mjengo-primary rounded-circle d-flex align-items-center justify-content-center"
+                                             style="width: 60px; height: 60px;">
+                                            <span class="text-white fw-bold">
+                                                {{ project.homeowner.first_name|first|upper }}{{ project.homeowner.last_name|first|upper }}
+                                            </span>
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <h6 class="fw-bold mb-1">{{ client.name }}</h6>
+                                    <h6 class="fw-bold mb-1">{{ project.homeowner.get_full_name }}</h6>
                                     <p class="text-muted small mb-2">
-                                        <i class="bi bi-star-fill text-warning me-1"></i>
-                                        {{ client.rating }} • {{ client.completed_projects }} projects completed
+                                        <i class="bi bi-person me-1"></i>
+                                        Member since {{ project.homeowner.date_joined|date:"Y" }}
                                     </p>
-                                    <p class="small mb-0">{{ client.bio }}</p>
+                                    {% if project.homeowner.profile.location %}
+                                    <p class="small mb-0">
+                                        <i class="bi bi-geo-alt me-1"></i>
+                                        {{ project.homeowner.profile.location }}
+                                    </p>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Similar Projects -->
-            <div class="mb-5">
-                <h4 class="fw-bold mb-4">Similar Projects</h4>
-                <div class="row g-3">
-                    {% for similar in similar_projects %}
-                    <div class="col-md-6">
-                        <div class="card border h-100">
-                            <div class="card-body">
-                                <span class="badge bg-mjengo-primary mb-2">{{ similar.category }}</span>
-                                <h6 class="fw-bold">{{ similar.title }}</h6>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <small class="text-muted">{{ similar.location }}</small>
-                                    <span class="fw-bold text-mjengo-accent">{{ similar.budget }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -129,44 +134,61 @@
         <!-- Sidebar -->
         <div class="col-lg-4">
             <!-- Apply Card -->
-            <div class="card shadow-lg border-0 sticky-top" style="top: 100px;">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3">Submit Your Proposal</h5>
+{#            <div class="card shadow-lg border-0 sticky-top" style="top: 700px;">#}
+{#                <div class="card-body p-4">#}
+{#                    <h5 class="fw-bold mb-3">Submit Your Bid</h5>#}
+{##}
+{#                    {% if user.is_authenticated and user.profile.user_type == 'artisan' %}#}
+{#                        {% if user_has_bid %}#}
+{#                        <div class="alert alert-success">#}
+{#                            <i class="bi bi-check-circle-fill me-2"></i>#}
+{#                            You've already submitted a bid for this project#}
+{#                        </div>#}
+{#                        <a href="{% url 'projects:bid_create' project.id %}" class="btn btn-outline-primary w-100">#}
+{#                            <i class="bi bi-eye me-2"></i>View Your Bid#}
+{#                        </a>#}
+{#                        {% else %}#}
+{#                        <a href="{% url 'projects:bid_create' project.id %}" class="btn btn-primary w-100 py-3 fw-semibold">#}
+{#                            <i class="bi bi-send me-2"></i>Submit Bid#}
+{#                        </a>#}
+{#                        {% endif %}#}
+{#                    {% elif user.is_authenticated and user.profile.user_type == 'homeowner' %}#}
+{#                        <div class="alert alert-info">#}
+{#                            <i class="bi bi-info-circle me-2"></i>#}
+{#                            This is your project. You can manage bids from your dashboard.#}
+{#                        </div>#}
+{#                    {% else %}#}
+{#                        <div class="alert alert-warning">#}
+{#                            <i class="bi bi-exclamation-triangle me-2"></i>#}
+{#                            You need to be logged in as an artisan to submit a bid.#}
+{#                        </div>#}
+{#                        <a href="{% url 'users:login' %}?next={{ request.path }}" class="btn btn-primary w-100">#}
+{#                            Login to Bid#}
+{#                        </a>#}
+{#                    {% endif %}#}
+{##}
+{#                    <hr class="my-4">#}
+{##}
+{#                    <div class="text-center">#}
+{#                        <small class="text-muted d-block mb-2">Bidding closes</small>#}
+{#                        {% if project.bidding_deadline %}#}
+{#                            <h5 class="fw-bold text-mjengo-primary">{{ project.bidding_deadline|date:"M d, Y" }}</h5>#}
+{#                        {% else %}#}
+{#                            <h5 class="fw-bold text-mjengo-primary">Open</h5>#}
+{#                        {% endif %}#}
+{#                    </div>#}
 
-                    {% if user_applied %}
-                    <div class="alert alert-success">
-                        <i class="bi bi-check-circle-fill me-2"></i>
-                        You've already applied to this project
-                    </div>
-                    {% else %}
-                    <form>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Your Bid (KES)</label>
-                            <input type="number" class="form-control" placeholder="Enter your bid amount">
-                            <small class="text-muted">Client's budget: {{ project.budget }}</small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Estimated Timeline</label>
-                            <input type="text" class="form-control" placeholder="e.g., 2 weeks">
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">Cover Letter</label>
-                            <textarea class="form-control" rows="4" placeholder="Why are you the right artisan for this job?"></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary w-100 py-3 fw-semibold">
-                            <i class="bi bi-send me-2"></i>Submit Proposal
-                        </button>
-                    </form>
-                    {% endif %}
-
-                    <hr class="my-4">
-
-                    <div class="text-center">
-                        <small class="text-muted d-block mb-2">Application closes in</small>
-                        <h5 class="fw-bold text-mjengo-primary">3 days, 14 hours</h5>
+                    <!-- Project Status -->
+                    <div class="mt-4">
+                        <small class="text-muted d-block mb-2">Project Status</small>
+                        <span class="badge
+                            {% if project.status == 'posted' %}bg-primary
+                            {% elif project.status == 'in_progress' %}bg-success
+                            {% elif project.status == 'completed' %}bg-secondary
+                            {% elif project.status == 'cancelled' %}bg-danger
+                            {% else %}bg-info{% endif %}">
+                            {{ project.get_status_display }}
+                        </span>
                     </div>
                 </div>
             </div>

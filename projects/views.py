@@ -118,59 +118,38 @@ class ProjectDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        project = self.object
+
+        # Debug: Print project data to console
+        print(f"DEBUG - Project ID: {project.id}")
+        print(f"DEBUG - Title: {project.title}")
+        print(f"DEBUG - Description: {project.description[:50]}...")
+        print(f"DEBUG - Budget Min: {project.budget_min}")
+        print(f"DEBUG - Budget Max: {project.budget_max}")
 
         # Increment view count
-        if not self.request.user.is_authenticated or self.request.user != self.object.homeowner:
-            self.object.view_count += 1
-            self.object.save(update_fields=['view_count'])
+        if not self.request.user.is_authenticated or self.request.user != project.homeowner:
+            project.view_count += 1
+            project.save(update_fields=['view_count'])
 
         # Get project images
-        context['images'] = self.object.images.all()
+        context['images'] = project.images.all()
 
-        # Get bids for this project
+        # Check if current user has bid on this project
         if self.request.user.is_authenticated:
-            if self.request.user == self.object.homeowner or self.request.user.is_staff:
-                # Show all bids to homeowner
-                context['bids'] = self.object.bids.select_related('artisan').all()
-            elif self.request.user.profile.user_type == 'artisan':
-                # Show artisan's own bid if they placed one
-                context['user_bid'] = self.object.bids.filter(artisan=self.request.user).first()
+            context['user_has_bid'] = Bid.objects.filter(
+                project=project,
+                artisan=self.request.user
+            ).exists()
+        else:
+            context['user_has_bid'] = False
 
-        # Get milestones
-        context['milestones'] = self.object.milestones.all()
-
-        # Get messages if user is involved
-        if self.request.user.is_authenticated:
-            if self.request.user == self.object.homeowner or self.request.user == self.object.assigned_to:
-                context['messages'] = self.object.messages.filter(
-                    Q(sender=self.request.user) | Q(receiver=self.request.user)
-                ).select_related('sender', 'receiver').order_by('created_at')[:50]
-
-        # Check if user can bid
-        if self.request.user.is_authenticated:
-            context['can_bid'] = (
-                    self.request.user.profile.user_type == 'artisan' and
-                    self.object.status == 'posted' and
-                    not self.object.bids.filter(artisan=self.request.user).exists()
-            )
-
-        # Check if user can message
-        context['can_message'] = (
-                self.request.user.is_authenticated and
-                self.request.user != self.object.homeowner and
-                self.object.assigned_to is None
-        )
-
-        # Add review if project is completed
-        if self.object.status == 'completed' and self.request.user.is_authenticated:
-            context['user_review'] = ProjectReview.objects.filter(
-                project=self.object,
-                reviewer=self.request.user
-            ).first()
+        # Get similar projects
+        context['similar_projects'] = Project.objects.filter(
+            category=project.category
+        ).exclude(id=project.id)[:3]
 
         return context
-
-
 class ProjectCreateView(LoginRequiredMixin, CreateView):
     """
     Create a new project

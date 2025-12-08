@@ -16,11 +16,19 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 
+    # Dashboard and Profile
     path('dashboard/', views.dashboard_view, name='dashboard'),
-    # Profile
     path('profile/', views.profile_view, name='profile'),
     path('profile/edit/', views.profile_edit, name='profile_edit'),
     path('profile/artisan/', views.artisan_profile, name='artisan_profile'),
+
+    # ADD THESE MISSING URLS:
+    path('my-projects/', views.my_projects_view, name='my_projects'),
+    path('settings/', views.settings_view, name='settings'),
+    path('profile/update/', views.profile_update_view, name='profile_update'),
+    path('profile/picture/', views.update_profile_picture, name='update_profile_picture'),
+    path('portfolio/add/', views.add_portfolio_image, name='add_portfolio_image'),
+    path('portfolio-image/<int:image_id>/delete/', views.delete_portfolio_image, name='delete_portfolio_image'),
 
     # Password reset (using Django's built-in)
     path('password-reset/',
@@ -45,15 +53,4 @@ urlpatterns = [
              template_name='users/password_reset_complete.html'
          ),
          name='password_reset_complete'),
-
-# Admin verification URLs
-    path('admin/verification-queue/',
-         views.verification_queue,
-         name='verification_queue'),
-    path('admin/verify-artisan/<int:artisan_id>/',
-         views.verify_artisan,
-         name='verify_artisan'),
-    path('admin/reject-artisan/<int:artisan_id>/',
-         views.reject_artisan,
-         name='reject_artisan'),
 ]

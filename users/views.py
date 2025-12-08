@@ -78,7 +78,7 @@ def login_view(request):
                 if user.profile.user_type == 'admin':
                     return redirect('admin_dashboard')
                 elif user.profile.user_type == 'artisan':
-                    return redirect('artisan_dashboard')
+                    return redirect('users:dashboard')
                 else:
                     return redirect('projects:dashboard')
             else:
@@ -346,3 +346,116 @@ def reject_artisan(request, artisan_id):
             messages.error(request, 'Artisan not found')
 
     return redirect('admin:verification_queue')
+
+
+# ADD THESE VIEWS TO users/views.py:
+
+@login_required
+def my_projects_view(request):
+    """View user's projects"""
+    from projects.models import Project
+    user = request.user
+
+    if user.profile.user_type == 'homeowner':
+        projects = Project.objects.filter(homeowner=user)
+    elif user.profile.user_type == 'artisan':
+        projects = Project.objects.filter(assigned_to=user)
+    else:
+        projects = Project.objects.none()
+
+    return render(request, 'users/my_projects.html', {
+        'projects': projects,
+        'title': 'My Projects',
+    })
+
+
+@login_required
+def settings_view(request):
+    """User settings page"""
+    return render(request, 'users/settings.html', {'title': 'Settings'})
+
+
+@login_required
+def profile_update_view(request):
+    """Update user profile"""
+    if request.method == 'POST':
+        user = request.user
+        profile = user.profile
+
+        # Update user fields
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.email = request.POST.get('email', user.email)
+        user.save()
+
+        # Update profile fields
+        profile.phone = request.POST.get('phone', profile.phone)
+        profile.location = request.POST.get('location', profile.location)
+        profile.bio = request.POST.get('bio', profile.bio)
+
+        # Update profile picture if provided
+        if 'profile_picture' in request.FILES:
+            profile.profile_picture = request.FILES['profile_picture']
+
+        # Update artisan profile if applicable
+        if profile.user_type == 'artisan':
+            try:
+                artisan = user.artisan_profile
+                artisan.trade = request.POST.get('trade', artisan.trade)
+                artisan.experience_years = request.POST.get('experience', artisan.experience_years)
+                artisan.skills = request.POST.get('skills', artisan.skills)
+                artisan.certifications = request.POST.get('certifications', artisan.certifications)
+                artisan.save()
+            except:
+                pass
+
+        profile.save()
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('users:profile')
+
+    return redirect('users:profile')
+
+
+@login_required
+def update_profile_picture(request):
+    """Update profile picture only"""
+    if request.method == 'POST':
+        profile = request.user.profile
+        if 'profile_picture' in request.FILES:
+            profile.profile_picture = request.FILES['profile_picture']
+            profile.save()
+            messages.success(request, 'Profile picture updated!')
+    return redirect('users:profile')
+
+
+@login_required
+def add_portfolio_image(request):
+    """Add portfolio images for artisans"""
+    if request.method == 'POST' and request.user.profile.user_type == 'artisan':
+        from .models import ArtisanPortfolioImage
+        images = request.FILES.getlist('portfolio_images')
+
+        for image in images[:10]:  # Limit to 10 images
+            ArtisanPortfolioImage.objects.create(
+                artisan=request.user,
+                image=image
+            )
+
+        messages.success(request, 'Portfolio images added!')
+
+    return redirect('users:profile')
+
+
+@login_required
+def delete_portfolio_image(request, image_id):
+    """Delete portfolio image"""
+    if request.method == 'DELETE' and request.user.profile.user_type == 'artisan':
+        from .models import ArtisanPortfolioImage
+        try:
+            image = ArtisanPortfolioImage.objects.get(id=image_id, artisan=request.user)
+            image.delete()
+            return JsonResponse({'success': True})
+        except:
+            return JsonResponse({'success': False}, status=404)
+
+    return JsonResponse({'success': False}, status=400)
