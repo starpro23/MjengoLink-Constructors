@@ -21,7 +21,7 @@ from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.db import transaction
-from django.db.models import Q, Count, Avg, F, ExpressionWrapper, DecimalField
+from django.db.models import Sum, Min, Max, Q, Count, Avg, F, ExpressionWrapper, DecimalField
 from django.core.paginator import Paginator
 from django.utils import timezone
 from decimal import Decimal
@@ -1030,7 +1030,7 @@ class ProjectDashboardView(LoginRequiredMixin, TemplateView):
                 'active_projects': projects.filter(status__in=['posted', 'assigned', 'in_progress']).count(),
                 'completed_projects': projects.filter(status='completed').count(),
                 'total_spent': projects.filter(status='completed').aggregate(
-                    total=Sum('final_budget')
+                    total=Sum('final_price')
                 )['total'] or 0,
                 'avg_bid_count': projects.filter(bid_count__gt=0).aggregate(
                     avg=Avg('bid_count')

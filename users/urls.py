@@ -45,4 +45,15 @@ urlpatterns = [
              template_name='users/password_reset_complete.html'
          ),
          name='password_reset_complete'),
+
+# Admin verification URLs
+    path('admin/verification-queue/',
+         views.verification_queue,
+         name='verification_queue'),
+    path('admin/verify-artisan/<int:artisan_id>/',
+         views.verify_artisan,
+         name='verify_artisan'),
+    path('admin/reject-artisan/<int:artisan_id>/',
+         views.reject_artisan,
+         name='reject_artisan'),
 ]

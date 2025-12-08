@@ -47,7 +47,7 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('title', 'description', 'homeowner_info', 'category', 'status')
         }),
         ('Location & Budget', {
-            'fields': ('location', 'exact_address', 'budget_min', 'budget_max', 'budget_range')
+            'fields': ('location', 'exact_address', 'budget_min', 'budget_max')
         }),
         ('Timeline & Requirements', {
             'fields': ('preferred_timeline', 'urgency', 'area_size',
